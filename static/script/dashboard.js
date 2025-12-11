@@ -1073,6 +1073,8 @@ class UIManager {
 
     init() {
         this.setupModals();
+        this.setupProfileModals();
+        this.setupPasswordToggles();
         this.updateCurrentDate();
         this.setupResizeHandler();
     }
@@ -1165,6 +1167,252 @@ class UIManager {
         adjustLayout();
         window.addEventListener('resize', Utils.debounce(adjustLayout, 250));
     }
+
+    setupProfileModals() {
+        // Formulario de editar perfil
+        const editProfileForm = document.getElementById('edit-profile-form');
+        if (editProfileForm) {
+            editProfileForm.addEventListener('submit', (e) => this.handleEditProfile(e));
+        }
+        
+        // Formulario de cambiar contraseña
+        const changePasswordForm = document.getElementById('change-password-form');
+        if (changePasswordForm) {
+            changePasswordForm.addEventListener('submit', (e) => this.handleChangePassword(e));
+        }
+    }
+
+    handleEditProfile(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = {
+            fullname: formData.get('full-name') || document.getElementById('full-name').value,
+            email: formData.get('email') || document.getElementById('email').value
+        };
+        
+        // Validación básica
+        if (!data.fullname || !data.email) {
+            this.showModalError('edit-profile-modal', 'Todos los campos son requeridos.');
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        const submitBtn = form.querySelector('.save-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        submitBtn.disabled = true;
+        
+        // Enviar datos al servidor
+        fetch('/update-profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 'success') {
+                // Actualizar la interfaz con los nuevos datos
+                this.updateUserInterface(result.user);
+                
+                // Mostrar mensaje de éxito
+                this.showModalSuccess('edit-profile-modal', result.message);
+                
+                // Cerrar modal después de 2 segundos
+                setTimeout(() => {
+                    this.modals.editProfile.close();
+                    this.modals.profile.open();
+                    
+                    // Actualizar datos en el modal de perfil
+                    this.updateProfileModalData(result.user);
+                }, 2000);
+            } else {
+                this.showModalError('edit-profile-modal', result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            this.showModalError('edit-profile-modal', 'Error al conectar con el servidor.');
+        })
+        .finally(() => {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    }
+
+    handleChangePassword(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        const data = {
+            current_password: document.getElementById('current-password').value,
+            new_password: document.getElementById('new-password').value,
+            confirm_password: document.getElementById('confirm-password').value
+        };
+        
+        // Validación
+        if (!data.current_password || !data.new_password || !data.confirm_password) {
+            this.showModalError('change-password-modal', 'Todos los campos son requeridos.');
+            return;
+        }
+        
+        if (data.new_password.length < 8) {
+            this.showModalError('change-password-modal', 'La nueva contraseña debe tener al menos 8 caracteres.');
+            return;
+        }
+        
+        if (data.new_password !== data.confirm_password) {
+            this.showModalError('change-password-modal', 'Las contraseñas no coinciden.');
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        const submitBtn = form.querySelector('.save-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        submitBtn.disabled = true;
+        
+        // Enviar datos al servidor
+        fetch('/change-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 'success') {
+                // Mostrar mensaje de éxito
+                this.showModalSuccess('change-password-modal', result.message);
+                
+                // Limpiar formulario
+                form.reset();
+                
+                // Cerrar modal después de 2 segundos
+                setTimeout(() => {
+                    this.modals.changePassword.close();
+                    this.modals.profile.open();
+                }, 2000);
+            } else {
+                this.showModalError('change-password-modal', result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            this.showModalError('change-password-modal', 'Error al conectar con el servidor.');
+        })
+        .finally(() => {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    }
+
+    updateUserInterface(userData) {
+        // Actualizar nombre en el sidebar
+        const userNameElements = document.querySelectorAll('.user-name');
+        userNameElements.forEach(element => {
+            element.textContent = userData.name;
+        });
+        
+        // Actualizar email en el sidebar
+        const userEmailElements = document.querySelectorAll('.user-email');
+        userEmailElements.forEach(element => {
+            element.textContent = userData.email;
+        });
+        
+        // Actualizar bienvenida en el dashboard
+        const welcomeTitle = document.querySelector('.welcome-section h1');
+        if (welcomeTitle) {
+            welcomeTitle.textContent = `Bienvenido, ${userData.name}`;
+        }
+        
+        // Actualizar avatar
+        const avatarImages = document.querySelectorAll('img[alt*="Avatar"]');
+        avatarImages.forEach(img => {
+            const newAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=6366f1&color=fff`;
+            img.src = newAvatarUrl;
+        });
+    }
+
+    updateProfileModalData(userData) {
+        // Actualizar información en el modal de perfil
+        const profileName = document.querySelector('.profile-name');
+        if (profileName) {
+            profileName.textContent = userData.name;
+        }
+        
+        const profileEmail = document.querySelector('.profile-email');
+        if (profileEmail) {
+            profileEmail.innerHTML = `<i class="fas fa-envelope"></i> ${userData.email}`;
+        }
+    }
+
+    showModalSuccess(modalId, message) {
+        const modal = document.getElementById(modalId);
+        const messageContainer = modal.querySelector('.success-message') || this.createMessageContainer(modal);
+        
+        messageContainer.className = 'form-message success';
+        messageContainer.innerHTML = `
+            <div class="form-message-content">
+                <div class="form-message-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="form-message-text">
+                    <h4 class="form-message-title">¡Éxito!</h4>
+                    <p class="form-message-details">${message}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    showModalError(modalId, message) {
+        const modal = document.getElementById(modalId);
+        const messageContainer = modal.querySelector('.error-message') || this.createMessageContainer(modal);
+        
+        messageContainer.className = 'form-message error';
+        messageContainer.innerHTML = `
+            <div class="form-message-content">
+                <div class="form-message-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="form-message-text">
+                    <h4 class="form-message-title">Error</h4>
+                    <p class="form-message-details">${message}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    createMessageContainer(modal) {
+        const container = document.createElement('div');
+        container.className = 'form-message';
+        modal.querySelector('.modal-content').appendChild(container);
+        return container;
+    }
+
+    setupPasswordToggles() {
+    document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const targetId = btn.dataset.target || 'current-password';
+            const passwordInput = document.getElementById(targetId);
+            
+            if (passwordInput) {
+                const isVisible = passwordInput.type === 'text';
+                passwordInput.type = isVisible ? 'password' : 'text';
+                
+                const icon = btn.querySelector('i');
+                icon.classList.toggle('fa-eye', isVisible);
+                icon.classList.toggle('fa-eye-slash', !isVisible);
+            }
+        });
+    });
+}
 }
 
 // ============================================

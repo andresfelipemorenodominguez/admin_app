@@ -2756,3 +2756,58 @@ body {
         font-size: var(--font-size-xs);
     }
 }
+
+/* Agregar estos estilos para los mensajes en los modales */
+.form-message {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 8px;
+    display: none;
+}
+
+.form-message.show {
+    display: block;
+}
+
+.form-message.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.form-message.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.form-message-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.form-message-icon {
+    font-size: 1.5rem;
+}
+
+.form-message-title {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+}
+
+.form-message-details {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Botones deshabilitados */
+.save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Spinner para carga */
+.fa-spinner {
+    margin-right: 8px;
+}

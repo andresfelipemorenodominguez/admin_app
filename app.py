@@ -1320,6 +1320,134 @@ def reset_password():
     except Exception as e:
         print(f"Reset password error: {e}")
         return jsonify({"status": "error", "message": "Error al restablecer la contraseña."})
+    
+# 📌 RUTA PARA ACTUALIZAR PERFIL DE USUARIO (POST)
+@app.route("/update-profile", methods=["POST"])
+def update_profile():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    data = request.get_json()
+    
+    nombre_completo = data.get("fullname")
+    correo_electronico = data.get("email")
+    
+    if not all([nombre_completo, correo_electronico]):
+        return jsonify({"status": "error", "message": "Todos los campos son requeridos."})
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        user_id = session['user_id']
+        
+        # Verificar si el nuevo email ya existe para otro usuario
+        check_email_query = """
+            SELECT id_admin FROM administradores 
+            WHERE correo_electronico = %s AND id_admin != %s
+        """
+        cur.execute(check_email_query, (correo_electronico, user_id))
+        if cur.fetchone():
+            return jsonify({"status": "error", "message": "Este correo electrónico ya está registrado por otro usuario."})
+        
+        # Actualizar perfil del usuario
+        update_query = """
+            UPDATE administradores 
+            SET nombre_completo = %s,
+                correo_electronico = %s
+            WHERE id_admin = %s
+            RETURNING id_admin, nombre_completo, correo_electronico
+        """
+        cur.execute(update_query, (nombre_completo, correo_electronico, user_id))
+        updated_user = cur.fetchone()
+        
+        conn.commit()
+        
+        # Actualizar datos en la sesión
+        if updated_user:
+            session['user_name'] = updated_user[1]
+            session['user_email'] = updated_user[2]
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "message": "Perfil actualizado exitosamente!",
+            "user": {
+                "name": session['user_name'],
+                "email": session['user_email']
+            }
+        })
+        
+    except Exception as e:
+        print(f"Update profile error: {e}")
+        return jsonify({"status": "error", "message": "Error al actualizar el perfil."})
+
+# 📌 RUTA PARA CAMBIAR CONTRASEÑA (POST)
+@app.route("/change-password", methods=["POST"])
+def change_password():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    data = request.get_json()
+    
+    current_password = data.get("current_password")
+    new_password = data.get("new_password")
+    confirm_password = data.get("confirm_password")
+    
+    if not all([current_password, new_password, confirm_password]):
+        return jsonify({"status": "error", "message": "Todos los campos son requeridos."})
+    
+    if new_password != confirm_password:
+        return jsonify({"status": "error", "message": "Las nuevas contraseñas no coinciden."})
+    
+    if len(new_password) < 8:
+        return jsonify({"status": "error", "message": "La nueva contraseña debe tener al menos 8 caracteres."})
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        
+        user_id = session['user_id']
+        
+        # Obtener la contraseña actual del usuario
+        query = "SELECT contrasena FROM administradores WHERE id_admin = %s"
+        cur.execute(query, (user_id,))
+        user = cur.fetchone()
+        
+        if not user:
+            return jsonify({"status": "error", "message": "Usuario no encontrado."})
+        
+        # Verificar la contraseña actual
+        if not bcrypt.checkpw(current_password.encode('utf-8'), user['contrasena'].encode('utf-8')):
+            return jsonify({"status": "error", "message": "La contraseña actual es incorrecta."})
+        
+        # Hash de la nueva contraseña
+        hashed_password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+        
+        # Actualizar contraseña
+        update_query = """
+            UPDATE administradores 
+            SET contrasena = %s
+            WHERE id_admin = %s
+        """
+        cur.execute(update_query, (hashed_password, user_id))
+        conn.commit()
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "message": "Contraseña actualizada exitosamente!"
+        })
+        
+    except Exception as e:
+        print(f"Change password error: {e}")
+        return jsonify({"status": "error", "message": "Error al cambiar la contraseña."})
 
 if __name__ == "__main__":
     app.run(debug=True)

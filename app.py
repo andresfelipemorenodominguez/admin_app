@@ -1477,10 +1477,6 @@ def registrar_estudiante():
     # Hash de la contraseña
     hashed_password = bcrypt.hashpw(contrasena.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     
-    # Generar código de estudiante único
-    import random
-    codigo_estudiante = f"EST{datetime.now().strftime('%Y%m%d')}{random.randint(1000, 9999)}"
-    
     try:
         conn = get_db_connection()
         cur = conn.cursor()
@@ -1493,6 +1489,22 @@ def registrar_estudiante():
         cur.execute(check_query, (correo_electronico, numero_documento))
         if cur.fetchone():
             return jsonify({"status": "error", "message": "El correo electrónico o número de documento ya están registrados."})
+        
+        # Obtener el último código de estudiante
+        cur.execute("SELECT codigo_estudiante FROM estudiantes ORDER BY id_estudiante DESC LIMIT 1")
+        last_student = cur.fetchone()
+        
+        if last_student:
+            # Extraer el número del último código y sumar 1
+            last_code = last_student[0]
+            last_number = int(last_code[3:])  # Quitar "EST" y convertir a número
+            new_number = last_number + 1
+        else:
+            # Si no hay estudiantes, comenzar desde 1
+            new_number = 1
+        
+        # Generar nuevo código secuencial con ceros a la izquierda
+        codigo_estudiante = f"EST{new_number:03d}"
         
         insert_query = """
             INSERT INTO estudiantes 
@@ -1566,10 +1578,6 @@ def registrar_profesor():
     # Hash de la contraseña
     hashed_password = bcrypt.hashpw(contrasena.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     
-    # Generar código de profesor único
-    import random
-    codigo_profesor = f"PROF{datetime.now().strftime('%Y%m%d')}{random.randint(1000, 9999)}"
-    
     try:
         conn = get_db_connection()
         cur = conn.cursor()
@@ -1582,6 +1590,22 @@ def registrar_profesor():
         cur.execute(check_query, (correo_electronico, numero_documento))
         if cur.fetchone():
             return jsonify({"status": "error", "message": "El correo electrónico o número de documento ya están registrados."})
+        
+        # Obtener el último código de profesor
+        cur.execute("SELECT codigo_profesor FROM profesores ORDER BY id_profesor DESC LIMIT 1")
+        last_professor = cur.fetchone()
+        
+        if last_professor:
+            # Extraer el número del último código y sumar 1
+            last_code = last_professor[0]
+            last_number = int(last_code[4:])  # Quitar "PROF" y convertir a número
+            new_number = last_number + 1
+        else:
+            # Si no hay profesores, comenzar desde 1
+            new_number = 1
+        
+        # Generar nuevo código secuencial con ceros a la izquierda
+        codigo_profesor = f"PROF{new_number:03d}"
         
         insert_query = """
             INSERT INTO profesores 

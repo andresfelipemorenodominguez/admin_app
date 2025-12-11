@@ -873,6 +873,8 @@ class StudentFormHandler extends BaseFormHandler {
         const formMessage = document.getElementById('estudiante-form-message');
         if (!formMessage) return;
         
+        // Aquí se recibe el código automáticamente del backend
+        // El mensaje ya incluye el código generado secuencialmente (EST001, EST002, etc.)
         const defaultMessage = '¡Estudiante registrado exitosamente! Los datos han sido guardados correctamente.';
         
         formMessage.className = 'form-message success';
@@ -1202,6 +1204,8 @@ class ProfessorFormHandler extends BaseFormHandler {
         const formMessage = document.getElementById('profesor-form-message');
         if (!formMessage) return;
         
+        // Aquí se recibe el código automáticamente del backend
+        // El mensaje ya incluye el código generado secuencialmente (PROF001, PROF002, etc.)
         const defaultMessage = '¡Profesor registrado exitosamente! Los datos han sido guardados correctamente.';
         
         formMessage.className = 'form-message success';

@@ -1449,5 +1449,269 @@ def change_password():
         print(f"Change password error: {e}")
         return jsonify({"status": "error", "message": "Error al cambiar la contraseña."})
 
+# 📌 RUTA PARA REGISTRAR ESTUDIANTE (POST) - ACTUALIZADA
+@app.route("/registrar-estudiante", methods=["POST"])
+def registrar_estudiante():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    data = request.get_json()
+    
+    # Extraer datos del formulario
+    nombre_completo = data.get("nombre_completo")
+    tipo_documento = data.get("tipo_documento")
+    numero_documento = data.get("numero_documento")
+    correo_electronico = data.get("correo_electronico")
+    grado = data.get("grado")
+    grupo = data.get("grupo")
+    contrasena = data.get("contrasena")
+    
+    # Validaciones básicas
+    if not all([nombre_completo, tipo_documento, numero_documento, correo_electronico, grado, grupo, contrasena]):
+        return jsonify({"status": "error", "message": "Todos los campos son requeridos."})
+    
+    if len(contrasena) < 8:
+        return jsonify({"status": "error", "message": "La contraseña debe tener al menos 8 caracteres."})
+    
+    # Hash de la contraseña
+    hashed_password = bcrypt.hashpw(contrasena.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    
+    # Generar código de estudiante único
+    import random
+    codigo_estudiante = f"EST{datetime.now().strftime('%Y%m%d')}{random.randint(1000, 9999)}"
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Verificar si el correo o documento ya existen
+        check_query = """
+            SELECT id_estudiante FROM estudiantes 
+            WHERE correo_electronico = %s OR numero_documento = %s
+        """
+        cur.execute(check_query, (correo_electronico, numero_documento))
+        if cur.fetchone():
+            return jsonify({"status": "error", "message": "El correo electrónico o número de documento ya están registrados."})
+        
+        insert_query = """
+            INSERT INTO estudiantes 
+            (codigo_estudiante, nombre_completo, tipo_documento, numero_documento, 
+             correo_electronico, grado, grupo, contrasena)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id_estudiante, codigo_estudiante;
+        """
+        cur.execute(insert_query, (codigo_estudiante, nombre_completo, tipo_documento, numero_documento,
+                                   correo_electronico, grado, grupo, hashed_password))
+        
+        new_student = cur.fetchone()
+        conn.commit()
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "message": "Estudiante registrado exitosamente!",
+            "data": {
+                "id": new_student[0],
+                "codigo": new_student[1]
+            }
+        })
+        
+    except psycopg2.Error as e:
+        error_message = str(e).lower()
+        if "unique constraint" in error_message:
+            if "correo_electronico" in error_message:
+                return jsonify({"status": "error", "message": "El correo electrónico ya está registrado."})
+            elif "numero_documento" in error_message:
+                return jsonify({"status": "error", "message": "El número de documento ya está registrado."})
+        print(f"Database error: {e}")
+        return jsonify({"status": "error", "message": "Error en la base de datos. Por favor, intenta nuevamente."})
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return jsonify({"status": "error", "message": "Error inesperado. Por favor, intenta nuevamente."})
+
+# 📌 RUTA PARA REGISTRAR PROFESOR (POST) - ACTUALIZADA
+@app.route("/registrar-profesor", methods=["POST"])
+def registrar_profesor():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    data = request.get_json()
+    
+    # Extraer datos del formulario
+    nombre_completo = data.get("nombre_completo")
+    tipo_documento = data.get("tipo_documento")
+    numero_documento = data.get("numero_documento")
+    correo_electronico = data.get("correo_electronico")
+    telefono = data.get("telefono")
+    asignaturas = data.get("asignaturas")
+    contrasena = data.get("contrasena")
+    
+    # Validaciones básicas
+    if not all([nombre_completo, tipo_documento, numero_documento, correo_electronico, telefono, contrasena]):
+        return jsonify({"status": "error", "message": "Todos los campos son requeridos."})
+    
+    if len(contrasena) < 8:
+        return jsonify({"status": "error", "message": "La contraseña debe tener al menos 8 caracteres."})
+    
+    # Convertir asignaturas (lista) a una cadena separada por comas
+    if isinstance(asignaturas, list):
+        asignaturas_str = ','.join(asignaturas)
+    else:
+        asignaturas_str = asignaturas or ""
+    
+    # Hash de la contraseña
+    hashed_password = bcrypt.hashpw(contrasena.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    
+    # Generar código de profesor único
+    import random
+    codigo_profesor = f"PROF{datetime.now().strftime('%Y%m%d')}{random.randint(1000, 9999)}"
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Verificar si el correo o documento ya existen
+        check_query = """
+            SELECT id_profesor FROM profesores 
+            WHERE correo_electronico = %s OR numero_documento = %s
+        """
+        cur.execute(check_query, (correo_electronico, numero_documento))
+        if cur.fetchone():
+            return jsonify({"status": "error", "message": "El correo electrónico o número de documento ya están registrados."})
+        
+        insert_query = """
+            INSERT INTO profesores 
+            (codigo_profesor, nombre_completo, tipo_documento, numero_documento, 
+             correo_electronico, telefono, asignaturas, contrasena)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id_profesor, codigo_profesor;
+        """
+        cur.execute(insert_query, (codigo_profesor, nombre_completo, tipo_documento, numero_documento,
+                                   correo_electronico, telefono, asignaturas_str, hashed_password))
+        
+        new_professor = cur.fetchone()
+        conn.commit()
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "message": "Profesor registrado exitosamente!",
+            "data": {
+                "id": new_professor[0],
+                "codigo": new_professor[1]
+            }
+        })
+        
+    except psycopg2.Error as e:
+        error_message = str(e).lower()
+        if "unique constraint" in error_message:
+            if "correo_electronico" in error_message:
+                return jsonify({"status": "error", "message": "El correo electrónico ya está registrado."})
+            elif "numero_documento" in error_message:
+                return jsonify({"status": "error", "message": "El número de documento ya está registrado."})
+        print(f"Database error: {e}")
+        return jsonify({"status": "error", "message": "Error en la base de datos. Por favor, intenta nuevamente."})
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return jsonify({"status": "error", "message": "Error inesperado. Por favor, intenta nuevamente."})
+
+# 📌 RUTA PARA OBTENER ESTUDIANTES (GET)
+@app.route("/obtener-estudiantes", methods=["GET"])
+def obtener_estudiantes():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        
+        query = """
+            SELECT 
+                codigo_estudiante as id,
+                nombre_completo as nombre,
+                correo_electronico as email,
+                grado,
+                grupo,
+                TO_CHAR(fecha_registro, 'DD/MM/YYYY') as fecha_registro,
+                estado
+            FROM estudiantes 
+            ORDER BY fecha_registro DESC
+        """
+        cur.execute(query)
+        estudiantes = cur.fetchall()
+        
+        # Convertir a lista de diccionarios
+        estudiantes_list = []
+        for estudiante in estudiantes:
+            estudiantes_list.append(dict(estudiante))
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "data": estudiantes_list
+        })
+        
+    except Exception as e:
+        print(f"Error obteniendo estudiantes: {e}")
+        return jsonify({"status": "error", "message": "Error al obtener los datos."})
+
+# 📌 RUTA PARA OBTENER PROFESORES (GET)
+@app.route("/obtener-profesores", methods=["GET"])
+def obtener_profesores():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        
+        query = """
+            SELECT 
+                codigo_profesor as id,
+                nombre_completo as nombre,
+                correo_electronico as email,
+                telefono,
+                asignaturas,
+                TO_CHAR(fecha_registro, 'DD/MM/YYYY') as fecha_registro,
+                estado
+            FROM profesores 
+            ORDER BY fecha_registro DESC
+        """
+        cur.execute(query)
+        profesores = cur.fetchall()
+        
+        # Convertir a lista de diccionarios
+        profesores_list = []
+        for profesor in profesores:
+            profesor_dict = dict(profesor)
+            # Convertir asignaturas de string a lista
+            if profesor_dict['asignaturas']:
+                profesor_dict['asignaturas'] = profesor_dict['asignaturas'].split(',')
+            else:
+                profesor_dict['asignaturas'] = []
+            profesores_list.append(profesor_dict)
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "data": profesores_list
+        })
+        
+    except Exception as e:
+        print(f"Error obteniendo profesores: {e}")
+        return jsonify({"status": "error", "message": "Error al obtener los datos."})
+
 if __name__ == "__main__":
     app.run(debug=True)

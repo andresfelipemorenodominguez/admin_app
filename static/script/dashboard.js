@@ -36,135 +36,6 @@ const CONFIG = {
 };
 
 // ============================================
-// DATOS DE EJEMPLO PARA LAS TABLAS
-// ============================================
-
-const SAMPLE_DATA = {
-    estudiantes: [
-        {
-            id: 'EST001',
-            nombre: 'María González López',
-            email: 'maria.gonzalez@ejemplo.com',
-            grado: '10° Secundaria',
-            grupo: 'A',
-            fechaRegistro: '2024-02-15',
-            estado: 'activo'
-        },
-        {
-            id: 'EST002',
-            nombre: 'Carlos Rodríguez Martínez',
-            email: 'carlos.rodriguez@ejemplo.com',
-            grado: '11° Secundaria',
-            grupo: 'B',
-            fechaRegistro: '2024-01-20',
-            estado: 'activo'
-        },
-        {
-            id: 'EST003',
-            nombre: 'Ana Sánchez Pérez',
-            email: 'ana.sanchez@ejemplo.com',
-            grado: '9° Secundaria',
-            grupo: 'C',
-            fechaRegistro: '2024-03-05',
-            estado: 'activo'
-        },
-        {
-            id: 'EST004',
-            nombre: 'Luis Fernández García',
-            email: 'luis.fernandez@ejemplo.com',
-            grado: '10° Secundaria',
-            grupo: 'A',
-            fechaRegistro: '2024-02-28',
-            estado: 'inactivo'
-        },
-        {
-            id: 'EST005',
-            nombre: 'Laura Martínez Díaz',
-            email: 'laura.martinez@ejemplo.com',
-            grado: '8° Secundaria',
-            grupo: 'B',
-            fechaRegistro: '2024-03-10',
-            estado: 'activo'
-        },
-        {
-            id: 'EST006',
-            nombre: 'Pedro Gómez Ruiz',
-            email: 'pedro.gomez@ejemplo.com',
-            grado: '11° Secundaria',
-            grupo: 'A',
-            fechaRegistro: '2024-01-15',
-            estado: 'activo'
-        },
-        {
-            id: 'EST007',
-            nombre: 'Sofía Hernández Castro',
-            email: 'sofia.hernandez@ejemplo.com',
-            grado: '10° Secundaria',
-            grupo: 'C',
-            fechaRegistro: '2024-02-10',
-            estado: 'activo'
-        },
-        {
-            id: 'EST008',
-            nombre: 'Javier Torres Romero',
-            email: 'javier.torres@ejemplo.com',
-            grado: '9° Secundaria',
-            grupo: 'B',
-            fechaRegistro: '2024-03-01',
-            estado: 'inactivo'
-        }
-    ],
-    
-    profesores: [
-        {
-            id: 'PROF001',
-            nombre: 'Carlos Rodríguez Martínez',
-            email: 'carlos.rodriguez@institucion.edu.co',
-            asignaturas: ['Matemáticas', 'Física'],
-            telefono: '3101234567',
-            fechaRegistro: '2024-01-10',
-            estado: 'activo'
-        },
-        {
-            id: 'PROF002',
-            nombre: 'Ana María Sánchez Pérez',
-            email: 'ana.sanchez@institucion.edu.co',
-            asignaturas: ['Español', 'Literatura'],
-            telefono: '3209876543',
-            fechaRegistro: '2024-02-05',
-            estado: 'activo'
-        },
-        {
-            id: 'PROF003',
-            nombre: 'Luis Alberto Fernández',
-            email: 'luis.fernandez@institucion.edu.co',
-            asignaturas: ['Ciencias Naturales', 'Biología'],
-            telefono: '3155551234',
-            fechaRegistro: '2024-01-25',
-            estado: 'activo'
-        },
-        {
-            id: 'PROF004',
-            nombre: 'María Elena García Torres',
-            email: 'maria.garcia@institucion.edu.co',
-            asignaturas: ['Inglés', 'Francés'],
-            telefono: '3187778888',
-            fechaRegistro: '2024-03-01',
-            estado: 'activo'
-        },
-        {
-            id: 'PROF005',
-            nombre: 'Roberto Jiménez López',
-            email: 'roberto.jimenez@institucion.edu.co',
-            asignaturas: ['Educación Física', 'Deportes'],
-            telefono: '3123334444',
-            fechaRegistro: '2024-02-20',
-            estado: 'licencia'
-        }
-    ]
-};
-
-// ============================================
 // MÓDULO DE UTILIDADES
 // ============================================
 
@@ -378,7 +249,7 @@ class TableManager {
 
 class EstudiantesTableManager extends TableManager {
     constructor() {
-        super('tabla-estudiantes', SAMPLE_DATA.estudiantes, {
+        super('tabla-estudiantes', [], {  // Inicialmente vacío
             searchInputId: 'search-estudiantes',
             counterId: 'estudiantes-counter',
             infoId: 'estudiantes-info',
@@ -387,6 +258,35 @@ class EstudiantesTableManager extends TableManager {
             shownSpanId: 'estudiantes-mostrados',
             searchFields: ['nombre', 'email', 'id', 'grado', 'grupo']
         });
+        this.loadData();
+    }
+
+    async loadData() {
+        try {
+            const response = await fetch('/obtener-estudiantes');
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                this.originalData = result.data;
+                this.filteredData = [...result.data];
+                this.renderTable();
+                this.updateCounters();
+            } else {
+                console.error('Error cargando estudiantes:', result.message);
+                // Mostrar datos de ejemplo si falla
+                this.originalData = SAMPLE_DATA.estudiantes;
+                this.filteredData = [...SAMPLE_DATA.estudiantes];
+                this.renderTable();
+                this.updateCounters();
+            }
+        } catch (error) {
+            console.error('Error cargando datos de estudiantes:', error);
+            // Mostrar datos de ejemplo en caso de error
+            this.originalData = SAMPLE_DATA.estudiantes;
+            this.filteredData = [...SAMPLE_DATA.estudiantes];
+            this.renderTable();
+            this.updateCounters();
+        }
     }
 
     renderRow(estudiante) {
@@ -406,7 +306,7 @@ class EstudiantesTableManager extends TableManager {
                 <td class="grupo-cell">
                     <span class="table-badge">${estudiante.grupo}</span>
                 </td>
-                <td>${Utils.formatDateShort(estudiante.fechaRegistro)}</td>
+                <td>${estudiante.fecha_registro}</td>
                 <td>
                     <div class="table-actions">
                         <button class="action-btn view" title="Ver detalles">
@@ -431,7 +331,7 @@ class EstudiantesTableManager extends TableManager {
 
 class ProfesoresTableManager extends TableManager {
     constructor() {
-        super('tabla-profesores', SAMPLE_DATA.profesores, {
+        super('tabla-profesores', [], {  // Inicialmente vacío
             searchInputId: 'search-profesores',
             counterId: 'profesores-counter',
             infoId: 'profesores-info',
@@ -440,6 +340,35 @@ class ProfesoresTableManager extends TableManager {
             shownSpanId: 'profesores-mostrados',
             searchFields: ['nombre', 'email', 'id', 'asignaturas', 'telefono']
         });
+        this.loadData();
+    }
+
+    async loadData() {
+        try {
+            const response = await fetch('/obtener-profesores');
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                this.originalData = result.data;
+                this.filteredData = [...result.data];
+                this.renderTable();
+                this.updateCounters();
+            } else {
+                console.error('Error cargando profesores:', result.message);
+                // Mostrar datos de ejemplo si falla
+                this.originalData = SAMPLE_DATA.profesores;
+                this.filteredData = [...SAMPLE_DATA.profesores];
+                this.renderTable();
+                this.updateCounters();
+            }
+        } catch (error) {
+            console.error('Error cargando datos de profesores:', error);
+            // Mostrar datos de ejemplo en caso de error
+            this.originalData = SAMPLE_DATA.profesores;
+            this.filteredData = [...SAMPLE_DATA.profesores];
+            this.renderTable();
+            this.updateCounters();
+        }
     }
 
     renderRow(profesor) {
@@ -448,9 +377,9 @@ class ProfesoresTableManager extends TableManager {
         const estadoText = profesor.estado === 'activo' ? 'Activo' : 
                           profesor.estado === 'licencia' ? 'En licencia' : 'Inactivo';
         
-        const asignaturasText = profesor.asignaturas.length > 2 
+        const asignaturasText = profesor.asignaturas && profesor.asignaturas.length > 2 
             ? `${profesor.asignaturas.slice(0, 2).join(', ')}...`
-            : profesor.asignaturas.join(', ');
+            : (profesor.asignaturas ? profesor.asignaturas.join(', ') : '');
         
         return `
             <tr>
@@ -459,11 +388,11 @@ class ProfesoresTableManager extends TableManager {
                 </td>
                 <td class="nombre-cell">${profesor.nombre}</td>
                 <td class="email-cell">${profesor.email}</td>
-                <td class="asignaturas-cell" title="${profesor.asignaturas.join(', ')}">
+                <td class="asignaturas-cell" title="${profesor.asignaturas ? profesor.asignaturas.join(', ') : ''}">
                     ${asignaturasText}
                 </td>
-                <td>${profesor.telefono}</td>
-                <td>${Utils.formatDateShort(profesor.fechaRegistro)}</td>
+                <td>${profesor.telefono || 'N/A'}</td>
+                <td>${profesor.fecha_registro}</td>
                 <td>
                     <div class="table-actions">
                         <button class="action-btn view" title="Ver detalles">
@@ -765,10 +694,6 @@ class BaseFormHandler {
     }
 }
 
-// ============================================
-// FORMULARIO DE ESTUDIANTE
-// ============================================
-
 class StudentFormHandler extends BaseFormHandler {
     constructor() {
         super('estudiante-form', {
@@ -825,12 +750,20 @@ class StudentFormHandler extends BaseFormHandler {
         
         // Toggle contraseña
         this.setupPasswordToggle('contrasena', 'toggle-estudiante-password');
+        
+        // Validación en tiempo real para número de documento
+        const docInput = document.getElementById('numero-documento');
+        if (docInput) {
+            docInput.addEventListener('input', () => {
+                docInput.value = docInput.value.replace(/[^0-9]/g, '');
+                Utils.clearError('numero-documento');
+            });
+        }
     }
 
     setupRealTimeValidation() {
         const passwordInput = document.getElementById('contrasena');
         const emailInput = document.getElementById('correo-electronico');
-        const docInput = document.getElementById('numero-documento');
         
         if (passwordInput) {
             const updateStrength = Utils.debounce(() => {
@@ -841,27 +774,171 @@ class StudentFormHandler extends BaseFormHandler {
         }
         
         if (emailInput) {
-            emailInput.addEventListener('blur', () => {
+            const validateEmail = Utils.debounce(() => {
                 const validation = Validator.email(emailInput.value);
                 if (validation.valid) {
                     Utils.markAsValid('correo-electronico');
                 } else {
                     Utils.showError('correo-electronico', validation.message);
                 }
-            });
+            }, 500);
+            
+            emailInput.addEventListener('input', validateEmail);
+            emailInput.addEventListener('blur', validateEmail);
+        }
+    }
+
+    async validateForm() {
+        let isValid = true;
+        
+        Object.entries(this.fields).forEach(([fieldId, config]) => {
+            const input = document.getElementById(fieldId);
+            if (!input) return;
+            
+            const value = input.value.trim();
+            const validation = config.validator(value);
+            
+            if (!validation.valid) {
+                Utils.showError(fieldId, validation.message);
+                isValid = false;
+            } else {
+                Utils.markAsValid(fieldId);
+            }
+        });
+        
+        // Validación adicional para número de documento
+        const docInput = document.getElementById('numero-documento');
+        if (docInput && !docInput.value.trim()) {
+            Utils.showError('numero-documento', 'El número de documento es obligatorio');
+            isValid = false;
         }
         
-        if (docInput) {
-            docInput.addEventListener('input', () => {
-                docInput.value = docInput.value.replace(/[^0-9]/g, '');
+        return isValid;
+    }
+
+    async processForm() {
+        // Preparar datos para enviar
+        const studentData = {
+            nombre_completo: document.getElementById('nombre-completo').value,
+            tipo_documento: document.getElementById('tipo-documento').value,
+            numero_documento: document.getElementById('numero-documento').value,
+            correo_electronico: document.getElementById('correo-electronico').value,
+            grado: document.getElementById('grado').value,
+            grupo: document.getElementById('grupo').value,
+            contrasena: document.getElementById('contrasena').value
+        };
+        
+        // Mostrar indicador de carga
+        const submitBtn = this.form.querySelector('.save-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+        submitBtn.disabled = true;
+        
+        try {
+            // Enviar datos al servidor
+            const response = await fetch('/registrar-estudiante', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(studentData)
             });
+            
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                this.showSuccessMessage(`Estudiante registrado exitosamente. Código: ${result.data.codigo}`);
+                this.resetForm();
+                this.updatePasswordStrength('contrasena', 'password-strength-fill', 'password-strength-label');
+                
+                // Actualizar la tabla de estudiantes si está visible
+                if (window.app && window.app.tables && window.app.tables.estudiantes) {
+                    await window.app.tables.estudiantes.loadData();
+                }
+                
+            } else {
+                this.showFormError(result.message || 'Error al registrar el estudiante');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            this.showFormError('Error al conectar con el servidor. Verifica tu conexión.');
+        } finally {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    showSuccessMessage(message = null) {
+        const formMessage = document.getElementById('estudiante-form-message');
+        if (!formMessage) return;
+        
+        const defaultMessage = '¡Estudiante registrado exitosamente! Los datos han sido guardados correctamente.';
+        
+        formMessage.className = 'form-message success';
+        formMessage.innerHTML = `
+            <div class="form-message-content">
+                <div class="form-message-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="form-message-text">
+                    <h4 class="form-message-title">¡Registro Exitoso!</h4>
+                    <p class="form-message-details">${message || defaultMessage}</p>
+                </div>
+            </div>
+        `;
+        
+        // Scroll to message
+        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    showFormError(message) {
+        const formMessage = document.getElementById('estudiante-form-message');
+        if (!formMessage) return;
+        
+        formMessage.className = 'form-message error';
+        formMessage.innerHTML = `
+            <div class="form-message-content">
+                <div class="form-message-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="form-message-text">
+                    <h4 class="form-message-title">Error de Registro</h4>
+                    <p class="form-message-details">${message}</p>
+                </div>
+            </div>
+        `;
+        
+        // Scroll to error
+        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        const firstError = this.form.querySelector('.error');
+        if (firstError) {
+            setTimeout(() => firstError.focus(), 300);
+        }
+    }
+
+    resetForm() {
+        super.resetForm();
+        
+        // Resetear la barra de fortaleza de contraseña
+        this.updatePasswordStrength('contrasena', 'password-strength-fill', 'password-strength-label');
+        
+        // Resetear campos específicos adicionales
+        const passwordInput = document.getElementById('contrasena');
+        if (passwordInput) {
+            passwordInput.type = 'password';
+            const toggleBtn = document.getElementById('toggle-estudiante-password');
+            if (toggleBtn) {
+                const icon = toggleBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
         }
     }
 }
-
-// ============================================
-// FORMULARIO DE PROFESOR
-// ============================================
 
 class ProfessorFormHandler extends BaseFormHandler {
     constructor() {
@@ -893,9 +970,16 @@ class ProfessorFormHandler extends BaseFormHandler {
     }
 
     validateAsignaturas(value) {
-        if (!value || value.length === 0) {
+        const select = document.getElementById('profesor-asignaturas');
+        if (!select) {
+            return { valid: false, message: 'Campo de asignaturas no encontrado' };
+        }
+        
+        const selectedOptions = Array.from(select.selectedOptions);
+        if (selectedOptions.length === 0) {
             return { valid: false, message: 'Debe seleccionar al menos una asignatura' };
         }
+        
         return { valid: true };
     }
 
@@ -932,7 +1016,48 @@ class ProfessorFormHandler extends BaseFormHandler {
         if (asignaturasSelect) {
             asignaturasSelect.addEventListener('change', () => {
                 this.updateAsignaturasCount();
+                this.validateAsignaturasInRealTime();
             });
+        }
+        
+        // Validación en tiempo real para número de documento
+        const docInput = document.getElementById('profesor-numero-documento');
+        if (docInput) {
+            docInput.addEventListener('input', () => {
+                docInput.value = docInput.value.replace(/[^0-9]/g, '');
+                Utils.clearError('profesor-numero-documento');
+            });
+        }
+        
+        // Validación en tiempo real para teléfono
+        const telefonoInput = document.getElementById('profesor-telefono');
+        if (telefonoInput) {
+            telefonoInput.addEventListener('input', () => {
+                telefonoInput.value = telefonoInput.value.replace(/[^0-9]/g, '');
+                Utils.clearError('profesor-telefono');
+            });
+        }
+    }
+
+    validateAsignaturasInRealTime() {
+        const select = document.getElementById('profesor-asignaturas');
+        const selectedCount = Array.from(select.selectedOptions).length;
+        const errorElement = document.getElementById('profesor-asignaturas-error');
+        
+        if (selectedCount === 0) {
+            if (errorElement) {
+                errorElement.textContent = 'Debe seleccionar al menos una asignatura';
+                errorElement.classList.add('show');
+            }
+            select.classList.add('error');
+            select.classList.remove('success');
+        } else {
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.classList.remove('show');
+            }
+            select.classList.remove('error');
+            select.classList.add('success');
         }
     }
 
@@ -959,17 +1084,199 @@ class ProfessorFormHandler extends BaseFormHandler {
         }
         
         if (emailInput) {
-            emailInput.addEventListener('blur', () => {
+            const validateEmail = Utils.debounce(() => {
                 const validation = Validator.email(emailInput.value);
                 if (validation.valid) {
                     Utils.markAsValid('profesor-correo-electronico');
                 } else {
                     Utils.showError('profesor-correo-electronico', validation.message);
                 }
+            }, 500);
+            
+            emailInput.addEventListener('input', validateEmail);
+            emailInput.addEventListener('blur', validateEmail);
+        }
+        
+        // Validación en tiempo real para teléfono
+        const telefonoInput = document.getElementById('profesor-telefono');
+        if (telefonoInput) {
+            telefonoInput.addEventListener('input', () => {
+                if (telefonoInput.value.trim().length >= 7) {
+                    Utils.markAsValid('profesor-telefono');
+                } else if (telefonoInput.value.trim() === '') {
+                    Utils.clearError('profesor-telefono');
+                }
             });
         }
         
         this.updateAsignaturasCount();
+    }
+
+    async validateForm() {
+        let isValid = true;
+        
+        // Validar campos del formulario base
+        Object.entries(this.fields).forEach(([fieldId, config]) => {
+            const input = document.getElementById(fieldId);
+            if (!input) return;
+            
+            let value;
+            if (fieldId === 'profesor-asignaturas') {
+                const select = document.getElementById(fieldId);
+                value = Array.from(select.selectedOptions).map(opt => opt.value);
+            } else {
+                value = input.value.trim();
+            }
+            
+            const validation = config.validator(value);
+            
+            if (!validation.valid) {
+                Utils.showError(fieldId, validation.message);
+                isValid = false;
+            } else {
+                Utils.markAsValid(fieldId);
+            }
+        });
+        
+        return isValid;
+    }
+
+    async processForm() {
+        // Obtener las asignaturas seleccionadas
+        const asignaturasSelect = document.getElementById('profesor-asignaturas');
+        const asignaturas = Array.from(asignaturasSelect.selectedOptions).map(option => option.value);
+        
+        // Preparar datos para enviar
+        const professorData = {
+            nombre_completo: document.getElementById('profesor-nombre-completo').value,
+            tipo_documento: document.getElementById('profesor-tipo-documento').value,
+            numero_documento: document.getElementById('profesor-numero-documento').value,
+            correo_electronico: document.getElementById('profesor-correo-electronico').value,
+            telefono: document.getElementById('profesor-telefono').value,
+            asignaturas: asignaturas,
+            contrasena: document.getElementById('profesor-contrasena').value
+        };
+        
+        // Mostrar indicador de carga
+        const submitBtn = this.form.querySelector('.save-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+        submitBtn.disabled = true;
+        
+        try {
+            // Enviar datos al servidor
+            const response = await fetch('/registrar-profesor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(professorData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                this.showSuccessMessage(`Profesor registrado exitosamente. Código: ${result.data.codigo}`);
+                this.resetForm();
+                this.updatePasswordStrength('profesor-contrasena', 'profesor-password-strength-fill', 'profesor-password-strength-label');
+                
+                // Actualizar la tabla de profesores si está visible
+                if (window.app && window.app.tables && window.app.tables.profesores) {
+                    await window.app.tables.profesores.loadData();
+                }
+                
+            } else {
+                this.showFormError(result.message || 'Error al registrar el profesor');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            this.showFormError('Error al conectar con el servidor. Verifica tu conexión.');
+        } finally {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    showSuccessMessage(message = null) {
+        const formMessage = document.getElementById('profesor-form-message');
+        if (!formMessage) return;
+        
+        const defaultMessage = '¡Profesor registrado exitosamente! Los datos han sido guardados correctamente.';
+        
+        formMessage.className = 'form-message success';
+        formMessage.innerHTML = `
+            <div class="form-message-content">
+                <div class="form-message-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="form-message-text">
+                    <h4 class="form-message-title">¡Registro Exitoso!</h4>
+                    <p class="form-message-details">${message || defaultMessage}</p>
+                </div>
+            </div>
+        `;
+        
+        // Scroll to message
+        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    showFormError(message) {
+        const formMessage = document.getElementById('profesor-form-message');
+        if (!formMessage) return;
+        
+        formMessage.className = 'form-message error';
+        formMessage.innerHTML = `
+            <div class="form-message-content">
+                <div class="form-message-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="form-message-text">
+                    <h4 class="form-message-title">Error de Registro</h4>
+                    <p class="form-message-details">${message}</p>
+                </div>
+            </div>
+        `;
+        
+        // Scroll to error
+        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        const firstError = this.form.querySelector('.error');
+        if (firstError) {
+            setTimeout(() => firstError.focus(), 300);
+        }
+    }
+
+    resetForm() {
+        super.resetForm();
+        
+        // Resetear la barra de fortaleza de contraseña
+        this.updatePasswordStrength('profesor-contrasena', 'profesor-password-strength-fill', 'profesor-password-strength-label');
+        
+        // Resetear selector de asignaturas
+        const asignaturasSelect = document.getElementById('profesor-asignaturas');
+        if (asignaturasSelect) {
+            Array.from(asignaturasSelect.options).forEach(option => {
+                option.selected = false;
+            });
+        }
+        
+        // Resetear contador de asignaturas
+        this.updateAsignaturasCount();
+        
+        // Resetear campos específicos adicionales
+        const passwordInput = document.getElementById('profesor-contrasena');
+        if (passwordInput) {
+            passwordInput.type = 'password';
+            const toggleBtn = document.getElementById('toggle-profesor-password');
+            if (toggleBtn) {
+                const icon = toggleBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        }
     }
 }
 

@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiBoletín - Sidebar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <!-- Logo de la aplicación -->
+            <div class="sidebar-header">
+                <button id="logo-btn" class="logo-btn">
+                    <i class="fas fa-newspaper logo-icon"></i>
+                    <span class="logo-text">MiBoletín</span>
+                </button>
+            </div>
+
+            <!-- Navegación principal -->
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="fas fa-home nav-icon"></i>
+                            <span class="nav-text">Inicio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fa-solid fa-user nav-icon"></i>
+                            <span class="nav-text">Agregar Estudiante</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fa-solid fa-chalkboard-user nav-icon"></i>
+                            <span class="nav-text">Agregar Profesor</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fa-solid fa-chart-bar nav-icon"></i>
+                            <span class="nav-text">Reportes</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Sección de perfil del usuario -->
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Juan+Perez&background=6366f1&color=fff" alt="Avatar de usuario">
+                    </div>
+                    <div class="user-info">
+                        <h3 class="user-name">Juan Perez</h3>
+                        <p class="user-email">juan@ejemplo.com</p>
+                    </div>
+                    <button id="profile-btn" class="profile-btn" title="Ver perfil">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenido principal de la aplicación -->
+        <main class="main-content">
+            <!-- Sección Inicio -->
+            <section id="inicio-section" class="content-section active">
+                <div class="content-wrapper">
+                    <!-- Título y bienvenida -->
+                    <div class="welcome-section">
+                        <h1>Bienvenido, Juan</h1>
+                        <p class="welcome-text">Este es tu panel de control de MiBoletín. Desde aquí puedes gestionar estudiantes, profesores y ver reportes del sistema.</p>
+                        <p class="welcome-date">Hoy es <span id="current-date"></span></p>
+                    </div>
+
+                    <!-- Resumen general con tarjetas -->
+                    <div class="overview-section">
+                        <h2 class="section-title">Resumen General</h2>
+                        <div class="overview-cards">
+                            <!-- Tarjeta 1: Estudiantes -->
+                            <div class="overview-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h3 class="card-title">Estudiantes</h3>
+                                    <p class="card-value">124</p>
+                                    <p class="card-subtitle">Registrados</p>
+                                </div>
+                                <div class="card-trend positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>12%</span>
+                                </div>
+                            </div>
+
+                            <!-- Tarjeta 2: Profesores -->
+                            <div class="overview-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h3 class="card-title">Profesores</h3>
+                                    <p class="card-value">24</p>
+                                    <p class="card-subtitle">Activos</p>
+                                </div>
+                                <div class="card-trend positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>8%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accesos rápidos -->
+                    <div class="quick-actions-section">
+                        <h2 class="section-title">Accesos Rápidos</h2>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action-btn" data-target="agregar-estudiante">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Agregar Estudiante</span>
+                            </button>
+                            
+                            <button class="quick-action-btn" data-target="agregar-profesor">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <span>Agregar Profesor</span>
+                            </button>
+                            
+                            <button class="quick-action-btn" data-target="reportes">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Generar Reporte</span>
+                            </button>
+                            
+                            <button class="quick-action-btn" id="open-profile-modal">
+                                <i class="fas fa-user-cog"></i>
+                                <span>Configurar Perfil</span>
+                            </button>
+                            
+                            <button class="quick-action-btn">
+                                <i class="fas fa-file-export"></i>
+                                <span>Exportar Datos</span>
+                            </button>
+                            
+                            <button class="quick-action-btn">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Ver Calendario</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Actividad reciente -->
+                    <div class="recent-activity-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Actividad Reciente</h2>
+                            <button class="view-all-btn">Ver todo</button>
+                        </div>
+                        
+                        <div class="activity-list">
+                            <!-- Actividad 1 -->
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4 class="activity-title">Nuevo estudiante registrado</h4>
+                                    <p class="activity-desc">María González se ha registrado en el sistema</p>
+                                    <p class="activity-time">Hace 2 horas</p>
+                                </div>
+                            </div>
+
+                            <!-- Actividad 2 -->
+                            <div class="activity-item">
+                                <div class="activity-icon info">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4 class="activity-title">Reporte generado</h4>
+                                    <p class="activity-desc">Reporte de calificaciones del 2do trimestre</p>
+                                    <p class="activity-time">Hoy, 09:15 AM</p>
+                                </div>
+                            </div>
+
+                            <!-- Actividad 3 -->
+                            <div class="activity-item">
+                                <div class="activity-icon warning">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4 class="activity-title">Actualización requerida</h4>
+                                    <p class="activity-desc">3 estudiantes tienen información incompleta</p>
+                                    <p class="activity-time">Ayer, 04:30 PM</p>
+                                </div>
+                            </div>
+
+                            <!-- Actividad 4 -->
+                            <div class="activity-item">
+                                <div class="activity-icon primary">
+                                    <i class="fas fa-edit"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4 class="activity-title">Perfil actualizado</h4>
+                                    <p class="activity-desc">Carlos Rodríguez actualizó su información</p>
+                                    <p class="activity-time">Ayer, 11:20 AM</p>
+                                </div>
+                            </div>
+
+                            <!-- Actividad 5 -->
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4 class="activity-title">Tarea completada</h4>
+                                    <p class="activity-desc">Calificaciones del examen de matemáticas</p>
+                                    <p class="activity-time">30 Oct, 03:45 PM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nota de demostración -->
+                    <div class="demo-note">
+                        <p><strong>Nota:</strong> Este es un dashboard de demostración. Los datos mostrados son de ejemplo. Haz clic en cualquiera de las opciones del sidebar para navegar entre las secciones.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Agregar Estudiante - ACTUALIZADA CON FORMULARIO -->
+            <section id="agregar-estudiante-section" class="content-section">
+                <div class="content-wrapper">
+                    <div class="form-header">
+                        <h1>Agregar Estudiante</h1>
+                        <p class="form-subtitle">Completa todos los campos para registrar un nuevo estudiante en el sistema.</p>
+                    </div>
+
+                    <!-- Formulario de registro de estudiante -->
+                    <form id="estudiante-form" class="student-form">
+                        <!-- Sección de información personal -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-user-circle"></i> Información Personal
+                            </h3>
+                            
+                            <!-- Nombre completo -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="nombre-completo" class="form-label">
+                                        Nombre completo
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-user input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            id="nombre-completo" 
+                                            class="form-input" 
+                                            placeholder="Ej: María González López"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="input-hint">Ingresa el nombre completo del estudiante</div>
+                                    <div class="error-message" id="nombre-error"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Documento de identidad -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="tipo-documento" class="form-label">
+                                        Tipo de documento
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <i class="fas fa-id-card select-icon"></i>
+                                        <select id="tipo-documento" class="form-select" required>
+                                            <option value="" disabled selected>Selecciona un tipo</option>
+                                            <option value="cedula">Cédula</option>
+                                            <option value="tarjeta-identidad">Tarjeta de identidad</option>
+                                            <option value="pasaporte">Pasaporte</option>
+                                            <option value="otro">Otro</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="numero-documento" class="form-label">
+                                        Número de documento
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-hashtag input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            id="numero-documento" 
+                                            class="form-input" 
+                                            placeholder="Ej: 123456789"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="error-message" id="documento-error"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Correo electrónico -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="correo-electronico" class="form-label">
+                                        Correo electrónico
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-envelope input-icon"></i>
+                                        <input 
+                                            type="email" 
+                                            id="correo-electronico" 
+                                            class="form-input" 
+                                            placeholder="Ej: estudiante@ejemplo.com"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="input-hint">Utiliza un correo institucional si está disponible</div>
+                                    <div class="error-message" id="correo-error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de información académica -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-graduation-cap"></i> Información Académica
+                            </h3>
+                            
+                            <!-- Grado y grupo -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="grado" class="form-label">
+                                        Grado
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <i class="fas fa-sort-numeric-up select-icon"></i>
+                                        <select id="grado" class="form-select" required>
+                                            <option value="" disabled selected>Selecciona un grado</option>
+                                            <option value="1">1° Primaria</option>
+                                            <option value="2">2° Primaria</option>
+                                            <option value="3">3° Primaria</option>
+                                            <option value="4">4° Primaria</option>
+                                            <option value="5">5° Primaria</option>
+                                            <option value="6">6° Primaria</option>
+                                            <option value="7">7° Secundaria</option>
+                                            <option value="8">8° Secundaria</option>
+                                            <option value="9">9° Secundaria</option>
+                                            <option value="10">10° Secundaria</option>
+                                            <option value="11">11° Secundaria</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="grupo" class="form-label">
+                                        Grupo/Sección
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <i class="fas fa-users select-icon"></i>
+                                        <select id="grupo" class="form-select" required>
+                                            <option value="" disabled selected>Selecciona un grupo</option>
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de seguridad -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-lock"></i> Seguridad y Acceso
+                            </h3>
+                            
+                            <!-- Contraseña -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="contrasena" class="form-label">
+                                        Contraseña para acceso al sistema
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="password-generator-container">
+                                        <div class="input-with-icon password-container">
+                                            <i class="fas fa-key input-icon"></i>
+                                            <input 
+                                                type="password" 
+                                                id="contrasena" 
+                                                class="form-input password-input" 
+                                                placeholder="Mínimo 8 caracteres"
+                                                required
+                                            >
+                                            <button type="button" class="toggle-password-btn" id="toggle-estudiante-password">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <button type="button" class="btn-secondary generate-password-btn" id="generate-password-btn">
+                                            <i class="fas fa-redo"></i> Generar contraseña
+                                        </button>
+                                    </div>
+                                    <div class="input-hint">La contraseña debe tener al menos 8 caracteres, una mayúscula y un número</div>
+                                    <div class="password-strength">
+                                        <div class="strength-text">Seguridad:</div>
+                                        <div class="strength-bar">
+                                            <div class="strength-fill" id="password-strength-fill"></div>
+                                        </div>
+                                        <div class="strength-label" id="password-strength-label">Débil</div>
+                                    </div>
+                                    <div class="error-message" id="contrasena-error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary cancel-btn" id="cancel-form-btn">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-primary save-btn">
+                                <i class="fas fa-save"></i> Registrar Estudiante
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Mensaje de confirmación/error -->
+                    <div class="form-message" id="form-message">
+                        <!-- El contenido se llenará dinámicamente -->
+                    </div>
+
+                    <!-- Nota de demostración -->
+                    <div class="demo-note">
+                        <p><strong>Nota:</strong> Este formulario es una demostración. En una aplicación real, los datos se enviarían a un servidor para su procesamiento.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Agregar Profesor - ACTUALIZADA CON FORMULARIO COMPLETO -->
+            <section id="agregar-profesor-section" class="content-section">
+                <div class="content-wrapper">
+                    <div class="form-header">
+                        <h1>Agregar Profesor</h1>
+                        <p class="form-subtitle">Completa todos los campos para registrar un nuevo profesor en el sistema.</p>
+                    </div>
+
+                    <!-- Formulario de registro de profesor -->
+                    <form id="profesor-form" class="student-form">
+                        <!-- Sección de información personal -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-user-circle"></i> Información Personal
+                            </h3>
+                            
+                            <!-- Nombre completo -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="profesor-nombre-completo" class="form-label">
+                                        Nombre completo
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-user input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            id="profesor-nombre-completo" 
+                                            class="form-input" 
+                                            placeholder="Ej: Carlos Rodríguez Martínez"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="input-hint">Ingresa el nombre completo del profesor</div>
+                                    <div class="error-message" id="profesor-nombre-error"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Documento de identidad -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="profesor-tipo-documento" class="form-label">
+                                        Tipo de documento
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <i class="fas fa-id-card select-icon"></i>
+                                        <select id="profesor-tipo-documento" class="form-select" required>
+                                            <option value="" disabled selected>Selecciona un tipo</option>
+                                            <option value="cc">Cédula de Ciudadanía (CC)</option>
+                                            <option value="ti">Tarjeta de Identidad (TI)</option>
+                                            <option value="ce">Cédula de Extranjería (CE)</option>
+                                            <option value="pasaporte">Pasaporte</option>
+                                            <option value="nit">NIT</option>
+                                            <option value="otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    <div class="error-message" id="profesor-tipo-documento-error"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="profesor-numero-documento" class="form-label">
+                                        Número de documento
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-hashtag input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            id="profesor-numero-documento" 
+                                            class="form-input" 
+                                            placeholder="Ej: 123456789"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="error-message" id="profesor-documento-error"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Correo electrónico institucional -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="profesor-correo-electronico" class="form-label">
+                                        Correo electrónico institucional
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-envelope input-icon"></i>
+                                        <input 
+                                            type="email" 
+                                            id="profesor-correo-electronico" 
+                                            class="form-input" 
+                                            placeholder="Ej: profesor@institucion.edu.co"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="input-hint">Utiliza el correo institucional del profesor</div>
+                                    <div class="error-message" id="profesor-correo-error"></div>
+                                </div>
+                            </div>
+
+                            <!-- Número de teléfono -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="profesor-telefono" class="form-label">
+                                        Número de teléfono
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-phone input-icon"></i>
+                                        <input 
+                                            type="tel" 
+                                            id="profesor-telefono" 
+                                            class="form-input" 
+                                            placeholder="Ej: 3101234567"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="input-hint">Ingresa el número de contacto del profesor</div>
+                                    <div class="error-message" id="profesor-telefono-error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de información académica -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-graduation-cap"></i> Información Académica
+                            </h3>
+                            
+                            <!-- Asignatura(s) que enseña -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="profesor-asignaturas" class="form-label">
+                                        Asignatura(s) que enseña
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="select-wrapper multi-select-wrapper">
+                                        <i class="fas fa-book select-icon"></i>
+                                        <select id="profesor-asignaturas" class="form-select" multiple required>
+                                            <option value="matematicas">Matemáticas</option>
+                                            <option value="español">Español</option>
+                                            <option value="ciencias-naturales">Ciencias Naturales</option>
+                                            <option value="ciencias-sociales">Ciencias Sociales</option>
+                                            <option value="ingles">Inglés</option>
+                                            <option value="educacion-fisica">Educación Física</option>
+                                            <option value="arte">Arte</option>
+                                            <option value="musica">Música</option>
+                                            <option value="tecnologia">Tecnología</option>
+                                            <option value="etica">Ética y Valores</option>
+                                            <option value="religion">Religión</option>
+                                            <option value="fisica">Física</option>
+                                            <option value="quimica">Química</option>
+                                            <option value="biologia">Biología</option>
+                                            <option value="filosofia">Filosofía</option>
+                                            <option value="economia">Economía</option>
+                                            <option value="informatica">Informática</option>
+                                        </select>
+                                        <div class="multi-select-info">
+                                            <span id="asignaturas-seleccionadas">0 asignaturas seleccionadas</span>
+                                            <small>(Mantén presionada la tecla Ctrl para seleccionar múltiples opciones)</small>
+                                        </div>
+                                    </div>
+                                    <div class="error-message" id="profesor-asignaturas-error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de seguridad -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-lock"></i> Seguridad y Acceso
+                            </h3>
+                            
+                            <!-- Contraseña -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="profesor-contrasena" class="form-label">
+                                        Contraseña para acceso al sistema
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="password-generator-container">
+                                        <div class="input-with-icon password-container">
+                                            <i class="fas fa-key input-icon"></i>
+                                            <input 
+                                                type="password" 
+                                                id="profesor-contrasena" 
+                                                class="form-input password-input" 
+                                                placeholder="Mínimo 8 caracteres"
+                                                required
+                                            >
+                                            <button type="button" class="toggle-password-btn" id="toggle-profesor-password">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <button type="button" class="btn-secondary generate-password-btn" id="generate-profesor-password-btn">
+                                            <i class="fas fa-redo"></i> Generar contraseña
+                                        </button>
+                                    </div>
+                                    <div class="input-hint">La contraseña debe tener al menos 8 caracteres, una mayúscula y un número</div>
+                                    <div class="password-strength">
+                                        <div class="strength-text">Seguridad:</div>
+                                        <div class="strength-bar">
+                                            <div class="strength-fill" id="profesor-password-strength-fill"></div>
+                                        </div>
+                                        <div class="strength-label" id="profesor-password-strength-label">Débil</div>
+                                    </div>
+                                    <div class="error-message" id="profesor-contrasena-error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary cancel-btn" id="cancel-profesor-form-btn">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-primary save-btn">
+                                <i class="fas fa-save"></i> Registrar Profesor
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Mensaje de confirmación/error -->
+                    <div class="form-message" id="profesor-form-message">
+                        <!-- El contenido se llenará dinámicamente -->
+                    </div>
+
+                    <!-- Nota de demostración -->
+                    <div class="demo-note">
+                        <p><strong>Nota:</strong> Este formulario es una demostración. En una aplicación real, los datos se enviarían a un servidor para su procesamiento.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Reportes - ACTUALIZADA CON TABLAS -->
+            <section id="reportes-section" class="content-section">
+                <div class="content-wrapper">
+                    <h1>Reportes del Sistema</h1>
+                    <p class="form-subtitle">Consulta y gestiona la información de estudiantes y profesores registrados.</p>
+
+                    <!-- Tabla de Estudiantes Registrados -->
+                    <div class="reports-section">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-users"></i> Estudiantes Registrados
+                            </h2>
+                            <div class="table-controls">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input 
+                                        type="text" 
+                                        id="search-estudiantes" 
+                                        class="search-input" 
+                                        placeholder="Buscar estudiantes..."
+                                    >
+                                </div>
+                                <span class="total-counter" id="estudiantes-counter">Total: 5 estudiantes</span>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="data-table" id="tabla-estudiantes">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <i class="fas fa-id-card"></i> ID
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-user"></i> Nombre Completo
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-envelope"></i> Email
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-graduation-cap"></i> Grado
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-users"></i> Grupo
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-calendar-alt"></i> Fecha Registro
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-cog"></i> Acciones
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Los datos se llenarán con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="table-footer">
+                            <div class="table-info" id="estudiantes-info">
+                                Mostrando <span id="estudiantes-mostrados">0</span> de <span id="estudiantes-total">0</span> estudiantes
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Profesores Registrados -->
+                    <div class="reports-section">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-chalkboard-teacher"></i> Profesores Registrados
+                            </h2>
+                            <div class="table-controls">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input 
+                                        type="text" 
+                                        id="search-profesores" 
+                                        class="search-input" 
+                                        placeholder="Buscar profesores..."
+                                    >
+                                </div>
+                                <span class="total-counter" id="profesores-counter">Total: 3 profesores</span>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="data-table" id="tabla-profesores">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <i class="fas fa-id-card"></i> ID
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-user"></i> Nombre Completo
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-envelope"></i> Email
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-book"></i> Asignaturas
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-phone"></i> Teléfono
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-calendar-alt"></i> Fecha Registro
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-cog"></i> Acciones
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Los datos se llenarán con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="table-footer">
+                            <div class="table-info" id="profesores-info">
+                                Mostrando <span id="profesores-mostrados">0</span> de <span id="profesores-total">0</span> profesores
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nota de demostración -->
+                    <div class="demo-note">
+                        <p><strong>Nota:</strong> Estas tablas muestran datos de ejemplo. En una aplicación real, los datos vendrían de una base de datos.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal de Perfil del Usuario -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-container">
+            <!-- Encabezado del modal -->
+            <div class="modal-header">
+                <h2 class="modal-title">Perfil del Usuario</h2>
+                <button class="modal-close-btn" id="modal-close-btn" aria-label="Cerrar modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Contenido del modal -->
+            <div class="modal-content">
+                <!-- Avatar del usuario -->
+                <div class="profile-avatar">
+                    <img src="https://ui-avatars.com/api/?name=Juan+Perez&size=120&background=6366f1&color=fff&bold=true" alt="Avatar de Juan Perez">
+                </div>
+
+                <!-- Información del usuario -->
+                <div class="profile-info">
+                    <h3 class="profile-name">Juan Perez</h3>
+                    <p class="profile-email">
+                        <i class="fas fa-envelope"></i> juan@ejemplo.com
+                    </p>
+                    <div class="profile-role">
+                        <span class="role-badge">Administrador</span>
+                    </div>
+                </div>
+
+                <!-- Acciones del perfil -->
+                <div class="profile-actions">
+                    <button class="profile-action-btn edit-btn">
+                        <i class="fas fa-user-edit"></i> Editar Perfil
+                    </button>
+                    <button class="profile-action-btn password-btn">
+                        <i class="fas fa-key"></i> Cambiar Contraseña
+                    </button>
+                    <button class="profile-action-btn logout-btn" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pie del modal -->
+            <div class="modal-footer">
+                <p class="last-login">Último acceso: Hoy, 10:42 AM</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Editar Perfil -->
+    <div class="modal-overlay" id="edit-profile-modal">
+        <div class="modal-container">
+            <!-- Encabezado del modal -->
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Perfil</h2>
+                <button class="modal-close-btn" id="edit-modal-close-btn" aria-label="Cerrar modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Contenido del modal -->
+            <div class="modal-content">
+                <!-- Sección de avatar -->
+                <div class="edit-profile-avatar-section">
+                    <div class="current-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Juan+Perez&size=120&background=6366f1&color=fff&bold=true" alt="Avatar actual">
+                    </div>
+                    <div class="avatar-actions">
+                        <button class="btn-secondary change-photo-btn" id="change-photo-btn">
+                            <i class="fas fa-camera"></i> Cambiar foto
+                        </button>
+                        <p class="avatar-hint">JPG, PNG o GIF. Máximo 2MB.</p>
+                    </div>
+                </div>
+
+                <!-- Formulario de edición -->
+                <form class="edit-profile-form" id="edit-profile-form">
+                    <div class="form-group">
+                        <label for="full-name" class="form-label">Nombre completo</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="full-name" class="form-input" value="Juan Perez" placeholder="Ingresa tu nombre completo">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Correo electrónico</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="email" class="form-input" value="juan@ejemplo.com" placeholder="Ingresa tu correo electrónico">
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary cancel-btn" id="cancel-edit-btn">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary save-btn">
+                            Guardar cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cambiar Contraseña -->
+    <div class="modal-overlay" id="change-password-modal">
+        <div class="modal-container">
+            <!-- Encabezado del modal -->
+            <div class="modal-header">
+                <h2 class="modal-title">Cambiar Contraseña</h2>
+                <button class="modal-close-btn" id="change-password-close-btn" aria-label="Cerrar modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Contenido del modal -->
+            <div class="modal-content">
+                <form class="change-password-form" id="change-password-form">
+                    <!-- Campo: Contraseña actual -->
+                    <div class="form-group">
+                        <label for="current-password" class="form-label">Contraseña actual</label>
+                        <div class="input-with-icon password-container">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="current-password" class="form-input password-input" 
+                                placeholder="Ingresa tu contraseña actual" required>
+                            <button type="button" class="toggle-password-btn" data-target="current-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="current-password-error"></div>
+                    </div>
+
+                    <!-- Campo: Nueva contraseña -->
+                    <div class="form-group">
+                        <label for="new-password" class="form-label">Nueva contraseña</label>
+                        <div class="input-with-icon password-container">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="new-password" class="form-input password-input" 
+                                placeholder="Mínimo 8 caracteres" required>
+                            <button type="button" class="toggle-password-btn" data-target="new-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="new-password-error"></div>
+                        <div class="password-hint">
+                            <i class="fas fa-info-circle"></i> La contraseña debe tener al menos 8 caracteres
+                        </div>
+                    </div>
+
+                    <!-- Campo: Confirmar nueva contraseña -->
+                    <div class="form-group">
+                        <label for="confirm-password" class="form-label">Confirmar nueva contraseña</label>
+                        <div class="input-with-icon password-container">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="confirm-password" class="form-input password-input" 
+                                placeholder="Repite la nueva contraseña" required>
+                            <button type="button" class="toggle-password-btn" data-target="confirm-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="confirm-password-error"></div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary cancel-btn" id="cancel-password-btn">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary save-btn">
+                            Guardar cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script/dashboard.js') }}"></script>
+</body>
+</html>

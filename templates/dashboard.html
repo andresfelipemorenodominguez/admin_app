@@ -10,7 +10,6 @@
 <body>
     <div class="app-container">
         <aside class="sidebar">
-            <!-- Logo de la aplicación -->
             <div class="sidebar-header">
                 <button id="logo-btn" class="logo-btn">
                     <i class="fas fa-newspaper logo-icon"></i>
@@ -18,7 +17,6 @@
                 </button>
             </div>
 
-            <!-- Navegación principal -->
             <nav class="sidebar-nav">
                 <ul class="nav-list">
                     <li class="nav-item">
@@ -48,7 +46,6 @@
                 </ul>
             </nav>
 
-            <!-- Sección de perfil del usuario -->
             <div class="sidebar-footer">
                 <div class="user-profile">
                     <div class="user-avatar">
@@ -65,23 +62,18 @@
             </div>
         </aside>
 
-        <!-- Contenido principal de la aplicación -->
         <main class="main-content">
-            <!-- Sección Inicio -->
             <section id="inicio-section" class="content-section active">
                 <div class="content-wrapper">
-                    <!-- Título y bienvenida -->
                     <div class="welcome-section">
                         <h1>Bienvenido, {{ user_name }}</h1>
                         <p class="welcome-text">Este es tu panel de control de MiBoletín. Desde aquí puedes gestionar estudiantes, profesores y ver reportes del sistema.</p>
                         <p class="welcome-date">Hoy es <span id="current-date"></span></p>
                     </div>
 
-                    <!-- Resumen general con tarjetas -->
                     <div class="overview-section">
                         <h2 class="section-title">Resumen General</h2>
                         <div class="overview-cards">
-                            <!-- Tarjeta 1: Estudiantes -->
                             <div class="overview-card">
                                 <div class="card-icon">
                                     <i class="fas fa-users"></i>
@@ -97,7 +89,6 @@
                                 </div>
                             </div>
 
-                            <!-- Tarjeta 2: Profesores -->
                             <div class="overview-card">
                                 <div class="card-icon">
                                     <i class="fas fa-chalkboard-teacher"></i>
@@ -115,7 +106,6 @@
                         </div>
                     </div>
 
-                    <!-- Accesos rápidos -->
                     <div class="quick-actions-section">
                         <h2 class="section-title">Accesos Rápidos</h2>
                         <div class="quick-actions-grid">
@@ -151,7 +141,6 @@
                         </div>
                     </div>
 
-                    <!-- Actividad reciente -->
                     <div class="recent-activity-section">
                         <div class="section-header">
                             <h2 class="section-title">Actividad Reciente</h2>
@@ -159,7 +148,6 @@
                         </div>
                         
                         <div class="activity-list">
-                            <!-- Actividad 1 -->
                             <div class="activity-item">
                                 <div class="activity-icon success">
                                     <i class="fas fa-user-plus"></i>
@@ -171,7 +159,6 @@
                                 </div>
                             </div>
 
-                            <!-- Actividad 2 -->
                             <div class="activity-item">
                                 <div class="activity-icon info">
                                     <i class="fas fa-chart-bar"></i>
@@ -183,7 +170,6 @@
                                 </div>
                             </div>
 
-                            <!-- Actividad 3 -->
                             <div class="activity-item">
                                 <div class="activity-icon warning">
                                     <i class="fas fa-exclamation-circle"></i>
@@ -195,7 +181,6 @@
                                 </div>
                             </div>
 
-                            <!-- Actividad 4 -->
                             <div class="activity-item">
                                 <div class="activity-icon primary">
                                     <i class="fas fa-edit"></i>
@@ -207,7 +192,6 @@
                                 </div>
                             </div>
 
-                            <!-- Actividad 5 -->
                             <div class="activity-item">
                                 <div class="activity-icon success">
                                     <i class="fas fa-check-circle"></i>
@@ -220,15 +204,9 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Nota de demostración -->
-                    <div class="demo-note">
-                        <p><strong>Nota:</strong> Este es un dashboard de demostración. Los datos mostrados son de ejemplo. Haz clic en cualquiera de las opciones del sidebar para navegar entre las secciones.</p>
-                    </div>
                 </div>
             </section>
 
-            <!-- Sección Agregar Estudiante - ACTUALIZADA CON FORMULARIO -->
             <section id="agregar-estudiante-section" class="content-section">
                 <div class="content-wrapper">
                     <div class="form-header">
@@ -236,15 +214,12 @@
                         <p class="form-subtitle">Completa todos los campos para registrar un nuevo estudiante en el sistema.</p>
                     </div>
 
-                    <!-- Formulario de registro de estudiante -->
                     <form id="estudiante-form" class="student-form">
-                        <!-- Sección de información personal -->
                         <div class="form-section">
                             <h3 class="form-section-title">
                                 <i class="fas fa-user-circle"></i> Información Personal
                             </h3>
                             
-                            <!-- Nombre completo -->
                             <div class="form-row">
                                 <div class="form-group full-width">
                                     <label for="nombre-completo" class="form-label">
@@ -266,7 +241,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Documento de identidad -->
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="tipo-documento" class="form-label">
@@ -304,7 +278,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Correo electrónico -->
                             <div class="form-row">
                                 <div class="form-group full-width">
                                     <label for="correo-electronico" class="form-label">
@@ -327,13 +300,11 @@
                             </div>
                         </div>
 
-                        <!-- Sección de información académica -->
                         <div class="form-section">
                             <h3 class="form-section-title">
                                 <i class="fas fa-graduation-cap"></i> Información Académica
                             </h3>
                             
-                            <!-- Grado y grupo -->
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="grado" class="form-label">
@@ -377,13 +348,11 @@
                             </div>
                         </div>
 
-                        <!-- Sección de seguridad -->
                         <div class="form-section">
                             <h3 class="form-section-title">
                                 <i class="fas fa-lock"></i> Seguridad y Acceso
                             </h3>
                             
-                            <!-- Contraseña -->
                             <div class="form-row">
                                 <div class="form-group full-width">
                                     <label for="contrasena" class="form-label">
@@ -421,7 +390,6 @@
                             </div>
                         </div>
 
-                        <!-- Botones de acción -->
                         <div class="form-actions">
                             <button type="button" class="btn-secondary cancel-btn" id="cancel-form-btn">
                                 Cancelar
@@ -432,19 +400,11 @@
                         </div>
                     </form>
 
-                    <!-- Mensaje de confirmación/error -->
                     <div class="form-message" id="form-message">
-                        <!-- El contenido se llenará dinámicamente -->
-                    </div>
-
-                    <!-- Nota de demostración -->
-                    <div class="demo-note">
-                        <p><strong>Nota:</strong> Este formulario es una demostración. En una aplicación real, los datos se enviarían a un servidor para su procesamiento.</p>
-                    </div>
+                        </div>
                 </div>
             </section>
 
-            <!-- Sección Agregar Profesor - ACTUALIZADA CON FORMULARIO COMPLETO -->
             <section id="agregar-profesor-section" class="content-section">
                 <div class="content-wrapper">
                     <div class="form-header">
@@ -452,15 +412,12 @@
                         <p class="form-subtitle">Completa todos los campos para registrar un nuevo profesor en el sistema.</p>
                     </div>
 
-                    <!-- Formulario de registro de profesor -->
                     <form id="profesor-form" class="student-form">
-                        <!-- Sección de información personal -->
                         <div class="form-section">
                             <h3 class="form-section-title">
                                 <i class="fas fa-user-circle"></i> Información Personal
                             </h3>
                             
-                            <!-- Nombre completo -->
                             <div class="form-row">
                                 <div class="form-group full-width">
                                     <label for="profesor-nombre-completo" class="form-label">
@@ -482,7 +439,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Documento de identidad -->
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="profesor-tipo-documento" class="form-label">
@@ -523,7 +479,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Correo electrónico institucional -->
                             <div class="form-row">
                                 <div class="form-group full-width">
                                     <label for="profesor-correo-electronico" class="form-label">
@@ -545,7 +500,6 @@
                                 </div>
                             </div>
 
-                            <!-- Número de teléfono -->
                             <div class="form-row">
                                 <div class="form-group full-width">
                                     <label for="profesor-telefono" class="form-label">
@@ -568,13 +522,11 @@
                             </div>
                         </div>
 
-                        <!-- Sección de información académica -->
                         <div class="form-section">
                             <h3 class="form-section-title">
                                 <i class="fas fa-graduation-cap"></i> Información Académica
                             </h3>
                             
-                            <!-- Asignatura(s) que enseña -->
                             <div class="form-row">
                                 <div class="form-group full-width">
                                     <label for="profesor-asignaturas" class="form-label">
@@ -612,13 +564,11 @@
                             </div>
                         </div>
 
-                        <!-- Sección de seguridad -->
                         <div class="form-section">
                             <h3 class="form-section-title">
                                 <i class="fas fa-lock"></i> Seguridad y Acceso
                             </h3>
                             
-                            <!-- Contraseña -->
                             <div class="form-row">
                                 <div class="form-group full-width">
                                     <label for="profesor-contrasena" class="form-label">
@@ -656,7 +606,6 @@
                             </div>
                         </div>
 
-                        <!-- Botones de acción -->
                         <div class="form-actions">
                             <button type="button" class="btn-secondary cancel-btn" id="cancel-profesor-form-btn">
                                 Cancelar
@@ -667,25 +616,16 @@
                         </div>
                     </form>
 
-                    <!-- Mensaje de confirmación/error -->
                     <div class="form-message" id="profesor-form-message">
-                        <!-- El contenido se llenará dinámicamente -->
-                    </div>
-
-                    <!-- Nota de demostración -->
-                    <div class="demo-note">
-                        <p><strong>Nota:</strong> Este formulario es una demostración. En una aplicación real, los datos se enviarían a un servidor para su procesamiento.</p>
-                    </div>
+                        </div>
                 </div>
             </section>
 
-            <!-- Sección Reportes - ACTUALIZADA CON TABLAS -->
             <section id="reportes-section" class="content-section">
                 <div class="content-wrapper">
                     <h1>Reportes del Sistema</h1>
                     <p class="form-subtitle">Consulta y gestiona la información de estudiantes y profesores registrados.</p>
 
-                    <!-- Tabla de Estudiantes Registrados -->
                     <div class="reports-section">
                         <div class="section-header">
                             <h2 class="section-title">
@@ -733,8 +673,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Los datos se llenarán con JavaScript -->
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
                         
@@ -745,7 +684,6 @@
                         </div>
                     </div>
 
-                    <!-- Tabla de Profesores Registrados -->
                     <div class="reports-section">
                         <div class="section-header">
                             <h2 class="section-title">
@@ -793,8 +731,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Los datos se llenarán con JavaScript -->
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
                         
@@ -804,20 +741,13 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Nota de demostración -->
-                    <div class="demo-note">
-                        <p><strong>Nota:</strong> Estas tablas muestran datos de ejemplo. En una aplicación real, los datos vendrían de una base de datos.</p>
-                    </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Modal de Perfil del Usuario -->
     <div class="modal-overlay" id="profile-modal">
         <div class="modal-container">
-            <!-- Encabezado del modal -->
             <div class="modal-header">
                 <h2 class="modal-title">Perfil del Usuario</h2>
                 <button class="modal-close-btn" id="modal-close-btn" aria-label="Cerrar modal">
@@ -825,14 +755,11 @@
                 </button>
             </div>
 
-            <!-- Contenido del modal -->
             <div class="modal-content">
-                <!-- Avatar del usuario -->
                 <div class="profile-avatar">
                     <img src="https://ui-avatars.com/api/?name={{ user_name|urlencode }}&size=120&background=6366f1&color=fff&bold=true" alt="Avatar de {{ user_name }}">
                 </div>
 
-                <!-- Información del usuario -->
                 <div class="profile-info">
                     <h3 class="profile-name">{{ user_name }}</h3>
                     <p class="profile-email">
@@ -843,7 +770,6 @@
                     </div>
                 </div>
 
-                <!-- Acciones del perfil -->
                 <div class="profile-actions">
                     <button class="profile-action-btn edit-btn">
                         <i class="fas fa-user-edit"></i> Editar Perfil
@@ -857,17 +783,14 @@
                 </div>
             </div>
 
-            <!-- Pie del modal -->
             <div class="modal-footer">
                 <p class="last-login">Último acceso: Hoy, 10:42 AM</p>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Editar Perfil -->
     <div class="modal-overlay" id="edit-profile-modal">
         <div class="modal-container">
-            <!-- Encabezado del modal -->
             <div class="modal-header">
                 <h2 class="modal-title">Editar Perfil</h2>
                 <button class="modal-close-btn" id="edit-modal-close-btn" aria-label="Cerrar modal">
@@ -875,9 +798,7 @@
                 </button>
             </div>
 
-            <!-- Contenido del modal -->
             <div class="modal-content">
-                <!-- Sección de avatar -->
                 <div class="edit-profile-avatar-section">
                     <div class="current-avatar">
                         <img src="https://ui-avatars.com/api/?name={{ user_name|urlencode }}&size=120&background=6366f1&color=fff&bold=true" alt="Avatar actual">
@@ -890,7 +811,6 @@
                     </div>
                 </div>
 
-                <!-- Formulario de edición -->
                 <form class="edit-profile-form" id="edit-profile-form">
                     <div class="form-group">
                         <label for="full-name" class="form-label">Nombre completo</label>
@@ -908,7 +828,6 @@
                         </div>
                     </div>
 
-                    <!-- Botones de acción -->
                     <div class="form-actions">
                         <button type="button" class="btn-secondary cancel-btn" id="cancel-edit-btn">
                             Cancelar
@@ -922,10 +841,8 @@
         </div>
     </div>
 
-    <!-- Modal de Cambiar Contraseña -->
     <div class="modal-overlay" id="change-password-modal">
         <div class="modal-container">
-            <!-- Encabezado del modal -->
             <div class="modal-header">
                 <h2 class="modal-title">Cambiar Contraseña</h2>
                 <button class="modal-close-btn" id="change-password-close-btn" aria-label="Cerrar modal">
@@ -933,10 +850,8 @@
                 </button>
             </div>
 
-            <!-- Contenido del modal -->
             <div class="modal-content">
                 <form class="change-password-form" id="change-password-form">
-                    <!-- Campo: Contraseña actual -->
                     <div class="form-group">
                         <label for="current-password" class="form-label">Contraseña actual</label>
                         <div class="input-with-icon password-container">
@@ -950,7 +865,6 @@
                         <div class="error-message" id="current-password-error"></div>
                     </div>
 
-                    <!-- Campo: Nueva contraseña -->
                     <div class="form-group">
                         <label for="new-password" class="form-label">Nueva contraseña</label>
                         <div class="input-with-icon password-container">
@@ -967,7 +881,6 @@
                         </div>
                     </div>
 
-                    <!-- Campo: Confirmar nueva contraseña -->
                     <div class="form-group">
                         <label for="confirm-password" class="form-label">Confirmar nueva contraseña</label>
                         <div class="input-with-icon password-container">
@@ -981,7 +894,6 @@
                         <div class="error-message" id="confirm-password-error"></div>
                     </div>
 
-                    <!-- Botones de acción -->
                     <div class="form-actions">
                         <button type="button" class="btn-secondary cancel-btn" id="cancel-password-btn">
                             Cancelar

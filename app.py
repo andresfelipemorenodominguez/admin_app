@@ -417,7 +417,44 @@ def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    return render_template("dashboard.html")
+    # Obtener información del usuario desde la base de datos
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        
+        query = """
+            SELECT id_admin, nombre_completo, correo_electronico 
+            FROM administradores 
+            WHERE id_admin = %s
+        """
+        cur.execute(query, (session['user_id'],))
+        user = cur.fetchone()
+        
+        cur.close()
+        conn.close()
+        
+        if user:
+            return render_template(
+                "dashboard.html", 
+                user_name=user['nombre_completo'],
+                user_email=user['correo_electronico']
+            )
+        else:
+            # Si no encuentra el usuario, usar datos de sesión como respaldo
+            return render_template(
+                "dashboard.html", 
+                user_name=session.get('user_name', 'Usuario'),
+                user_email=session.get('user_email', 'usuario@ejemplo.com')
+            )
+            
+    except Exception as e:
+        print(f"Error al obtener datos del usuario: {e}")
+        # En caso de error, usar datos de sesión
+        return render_template(
+            "dashboard.html", 
+            user_name=session.get('user_name', 'Usuario'),
+            user_email=session.get('user_email', 'usuario@ejemplo.com')
+        )
 
 # -------------------------
 # 📌 RUTA PARA CERRAR SESIÓN

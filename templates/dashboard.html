@@ -52,11 +52,11 @@
             <div class="sidebar-footer">
                 <div class="user-profile">
                     <div class="user-avatar">
-                        <img src="https://ui-avatars.com/api/?name=Juan+Perez&background=6366f1&color=fff" alt="Avatar de usuario">
+                        <img src="https://ui-avatars.com/api/?name={{ user_name|urlencode }}&background=6366f1&color=fff" alt="Avatar de usuario">
                     </div>
                     <div class="user-info">
-                        <h3 class="user-name">Juan Perez</h3>
-                        <p class="user-email">juan@ejemplo.com</p>
+                        <h3 class="user-name">{{ user_name }}</h3>
+                        <p class="user-email">{{ user_email }}</p>
                     </div>
                     <button id="profile-btn" class="profile-btn" title="Ver perfil">
                         <i class="fas fa-chevron-right"></i>
@@ -72,7 +72,7 @@
                 <div class="content-wrapper">
                     <!-- Título y bienvenida -->
                     <div class="welcome-section">
-                        <h1>Bienvenido, Juan</h1>
+                        <h1>Bienvenido, {{ user_name }}</h1>
                         <p class="welcome-text">Este es tu panel de control de MiBoletín. Desde aquí puedes gestionar estudiantes, profesores y ver reportes del sistema.</p>
                         <p class="welcome-date">Hoy es <span id="current-date"></span></p>
                     </div>
@@ -829,14 +829,14 @@
             <div class="modal-content">
                 <!-- Avatar del usuario -->
                 <div class="profile-avatar">
-                    <img src="https://ui-avatars.com/api/?name=Juan+Perez&size=120&background=6366f1&color=fff&bold=true" alt="Avatar de Juan Perez">
+                    <img src="https://ui-avatars.com/api/?name={{ user_name|urlencode }}&size=120&background=6366f1&color=fff&bold=true" alt="Avatar de {{ user_name }}">
                 </div>
 
                 <!-- Información del usuario -->
                 <div class="profile-info">
-                    <h3 class="profile-name">Juan Perez</h3>
+                    <h3 class="profile-name">{{ user_name }}</h3>
                     <p class="profile-email">
-                        <i class="fas fa-envelope"></i> juan@ejemplo.com
+                        <i class="fas fa-envelope"></i> {{ user_email }}
                     </p>
                     <div class="profile-role">
                         <span class="role-badge">Administrador</span>
@@ -880,7 +880,7 @@
                 <!-- Sección de avatar -->
                 <div class="edit-profile-avatar-section">
                     <div class="current-avatar">
-                        <img src="https://ui-avatars.com/api/?name=Juan+Perez&size=120&background=6366f1&color=fff&bold=true" alt="Avatar actual">
+                        <img src="https://ui-avatars.com/api/?name={{ user_name|urlencode }}&size=120&background=6366f1&color=fff&bold=true" alt="Avatar actual">
                     </div>
                     <div class="avatar-actions">
                         <button class="btn-secondary change-photo-btn" id="change-photo-btn">
@@ -896,7 +896,7 @@
                         <label for="full-name" class="form-label">Nombre completo</label>
                         <div class="input-with-icon">
                             <i class="fas fa-user input-icon"></i>
-                            <input type="text" id="full-name" class="form-input" value="Juan Perez" placeholder="Ingresa tu nombre completo">
+                            <input type="text" id="full-name" class="form-input" value="{{ user_name }}" placeholder="Ingresa tu nombre completo">
                         </div>
                     </div>
 
@@ -904,7 +904,7 @@
                         <label for="email" class="form-label">Correo electrónico</label>
                         <div class="input-with-icon">
                             <i class="fas fa-envelope input-icon"></i>
-                            <input type="email" id="email" class="form-input" value="juan@ejemplo.com" placeholder="Ingresa tu correo electrónico">
+                            <input type="email" id="email" class="form-input" value="{{ user_email }}" placeholder="Ingresa tu correo electrónico">
                         </div>
                     </div>
 

@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Variable para almacenar tipo de usuario identificado
     let tipoUsuario = null;
     let nombreUsuario = null;
+    let codigoUsuario = null;
+    let idUsuario = null;
     
     // Función para validar el formulario
     function validateForm() {
@@ -91,42 +93,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Función para enviar solicitud al servidor
-    async function submitFormToServer(formData) {
-        // Aquí simularías el envío real o integrarías con tu backend
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // Simulamos un 90% de probabilidad de éxito
-                const success = Math.random() > 0.1;
-                
-                if (success) {
-                    resolve({
-                        status: 'success',
-                        message: 'Solicitud procesada correctamente',
-                        adminName: adminName,
-                        adminEmail: adminEmail,
-                        tipoUsuario: tipoUsuario,
-                        nombreUsuario: nombreUsuario
-                    });
-                } else {
-                    reject({
-                        status: 'error',
-                        message: 'Error en el servidor al procesar la solicitud'
-                    });
-                }
-            }, 1500);
-        });
+    // Función para guardar la solicitud en la base de datos
+    async function guardarSolicitudEnBD(formData) {
+        try {
+            const response = await fetch('/guardar_solicitud', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error al guardar la solicitud');
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error al guardar solicitud:', error);
+            throw error;
+        }
     }
     
     // Función para mostrar mensaje de éxito
-    function showSuccessMessage(tipoUsuario, nombreUsuario) {
-        let mensaje = '';
-        
-        if (tipoUsuario && nombreUsuario) {
-            mensaje = `Tu solicitud como <strong>${tipoUsuario}</strong> (<strong>${nombreUsuario}</strong>) ha sido enviada al administrador del sistema (<strong>${adminName}</strong>, ${adminEmail}).`;
-        } else {
-            mensaje = `Tu solicitud ha sido enviada al administrador del sistema (<strong>${adminName}</strong>, ${adminEmail}).`;
-        }
+    function showSuccessMessage(data) {
+        const mensaje = `
+            Tu solicitud (N° <strong>${data.id_solicitud}</strong>) como 
+            <strong>${data.tipo_usuario}</strong> (<strong>${data.nombre_usuario}</strong>) 
+            ha sido enviada al administrador del sistema 
+            (<strong>${data.admin_name}</strong>, ${data.admin_email}).
+            <br><br>
+            <small>Fecha de solicitud: ${data.fecha_solicitud}</small>
+        `;
         
         successMessageText.innerHTML = mensaje;
         form.classList.add('hidden');
@@ -156,6 +155,8 @@ document.addEventListener('DOMContentLoaded', function() {
         form.reset();
         tipoUsuario = null;
         nombreUsuario = null;
+        codigoUsuario = null;
+        idUsuario = null;
         userIdentifierError.textContent = '';
         userEmailError.textContent = '';
         requestReasonError.textContent = '';
@@ -187,28 +188,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Usuario verificado correctamente
                 tipoUsuario = verificationResult.tipo;
                 nombreUsuario = verificationResult.nombre;
+                codigoUsuario = verificationResult.codigo;
+                idUsuario = verificationResult.id;
                 
                 // Crear objeto con los datos del formulario
                 const formData = {
-                    userIdentifier: userIdentifier.value,
-                    userEmail: userEmail.value,
-                    requestReason: requestReason.value,
-                    tipoUsuario: tipoUsuario,
-                    nombreUsuario: nombreUsuario,
-                    adminId: adminId,
-                    adminName: adminName,
-                    adminEmail: adminEmail,
-                    timestamp: new Date().toISOString()
+                    userIdentifier: userIdentifier.value.trim(),
+                    userEmail: userEmail.value.trim(),
+                    requestReason: requestReason.value.trim(),
+                    adminId: adminId
                 };
                 
-                // Enviar datos al servidor (simulado)
-                await submitFormToServer(formData);
+                // Guardar la solicitud en la base de datos
+                const saveResult = await guardarSolicitudEnBD(formData);
                 
-                // Mostrar mensaje de éxito con información específica
-                showSuccessMessage(tipoUsuario, nombreUsuario);
-                
-                // En un caso real, aquí podrías enviar los datos a un servidor
-                console.log('Datos enviados al servidor:', formData);
+                if (saveResult.status === 'success') {
+                    // Mostrar mensaje de éxito con información específica
+                    showSuccessMessage(saveResult);
+                    
+                    // Enviar notificación por correo (opcional, implementación futura)
+                    console.log('Solicitud guardada en la base de datos:', saveResult);
+                } else {
+                    throw new Error(saveResult.message || 'Error al guardar la solicitud');
+                }
                 
             } else {
                 // Usuario no encontrado
@@ -217,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         } catch (error) {
             // Mostrar mensaje de error
-            showErrorMessage(error.message || 'Error al verificar usuario. Por favor, inténtalo de nuevo.');
+            showErrorMessage(error.message || 'Error al procesar la solicitud. Por favor, inténtalo de nuevo.');
             console.error('Error al enviar la solicitud:', error);
         } finally {
             // Restaurar botón
@@ -271,5 +273,10 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             requestReasonError.textContent = '';
         }
+    });
+    
+    // Limpiar sesión al cargar la página
+    window.addEventListener('beforeunload', function() {
+        fetch('/limpiar_sesion', { method: 'POST' });
     });
 });

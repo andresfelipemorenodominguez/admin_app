@@ -1828,6 +1828,40 @@ def eliminar_profesor():
     except Exception as e:
         print(f"Error eliminando profesor: {e}")
         return jsonify({"status": "error", "message": "Error al eliminar el profesor."})
+    
+# 📌 RUTA PARA OBTENER ESTADÍSTICAS DEL DASHBOARD (GET)
+@app.route("/dashboard-stats", methods=["GET"])
+def dashboard_stats():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Contar estudiantes activos
+        cur.execute("SELECT COUNT(*) FROM estudiantes WHERE estado = 'activo'")
+        estudiantes_count = cur.fetchone()[0]
+        
+        # Contar profesores activos
+        cur.execute("SELECT COUNT(*) FROM profesores WHERE estado = 'activo'")
+        profesores_count = cur.fetchone()[0]
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "data": {
+                "estudiantes": estudiantes_count,
+                "profesores": profesores_count
+            }
+        })
+        
+    except Exception as e:
+        print(f"Error obteniendo estadísticas: {e}")
+        return jsonify({"status": "error", "message": "Error al obtener estadísticas."})
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -339,6 +339,11 @@ class EstudiantesTableManager extends TableManager {
                 
                 // Mostrar mensaje de éxito
                 this.showMessage(result.message, 'success');
+
+                // Actualizar estadísticas del dashboard
+                if (window.app && window.app.stats) {
+                    await window.app.stats.refresh();
+                }
             } else {
                 this.showMessage(result.message, 'error');
                 // Restaurar botón
@@ -581,6 +586,11 @@ class ProfesoresTableManager extends TableManager {
                 
                 // Mostrar mensaje de éxito
                 this.showMessage(result.message, 'success');
+
+                // Actualizar estadísticas del dashboard
+                if (window.app && window.app.stats) {
+                    await window.app.stats.refresh();
+                }
             } else {
                 this.showMessage(result.message, 'error');
                 // Restaurar botón
@@ -1174,6 +1184,11 @@ class StudentFormHandler extends BaseFormHandler {
                     await window.app.tables.estudiantes.loadData();
                 }
 
+                // Actualizar estadísticas del dashboard
+                if (window.app && window.app.stats) {
+                    await window.app.stats.refresh();
+                }
+
             } else {
                 this.showFormError(result.message || 'Error al registrar el estudiante');
             }
@@ -1505,6 +1520,11 @@ class ProfessorFormHandler extends BaseFormHandler {
                     await window.app.tables.profesores.loadData();
                 }
 
+                // Actualizar estadísticas del dashboard
+                if (window.app && window.app.stats) {
+                    await window.app.stats.refresh();
+                }
+
             } else {
                 this.showFormError(result.message || 'Error al registrar el profesor');
             }
@@ -1649,6 +1669,11 @@ class NavigationManager {
         if (targetSection) {
             targetSection.classList.add('active');
             this.currentSection = targetSectionId;
+            
+            // Si estamos en la sección de inicio, actualizar estadísticas
+            if (targetSectionId === 'inicio-section' && window.app && window.app.stats) {
+                window.app.stats.refresh();
+            }
         }
     }
 
@@ -2058,7 +2083,92 @@ class UIManager {
 }
 
 // ============================================
-// INICIALIZACIÓN DE LA APLICACIÓN
+// MÓDULO DE ESTADÍSTICAS
+// ============================================
+
+class StatsManager {
+    constructor() {
+        this.stats = {
+            estudiantes: 0,
+            profesores: 0
+        };
+        this.init();
+    }
+
+    async init() {
+        await this.loadStats();
+        this.updateUI();
+    }
+
+    async loadStats() {
+        try {
+            const response = await fetch('/dashboard-stats');
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                this.stats = result.data;
+                return true;
+            } else {
+                console.error('Error cargando estadísticas:', result.message);
+                return false;
+            }
+        } catch (error) {
+            console.error('Error cargando estadísticas del dashboard:', error);
+            return false;
+        }
+    }
+
+    updateUI() {
+        // Actualizar contador de estudiantes
+        const estudiantesElement = document.querySelector('.overview-cards .overview-card:nth-child(1) .card-value');
+        if (estudiantesElement) {
+            estudiantesElement.textContent = this.stats.estudiantes;
+        }
+
+        // Actualizar contador de profesores
+        const profesoresElement = document.querySelector('.overview-cards .overview-card:nth-child(2) .card-value');
+        if (profesoresElement) {
+            profesoresElement.textContent = this.stats.profesores;
+        }
+
+        // Si estamos en la sección de reportes, también actualizar los contadores de las tablas
+        this.updateTableCounters();
+    }
+
+    updateTableCounters() {
+        // Actualizar contadores en las tablas si están visibles
+        if (window.app && window.app.tables) {
+            if (window.app.tables.estudiantes) {
+                const estudiantesCounter = document.getElementById('estudiantes-counter');
+                if (estudiantesCounter) {
+                    estudiantesCounter.textContent = `Total: ${this.stats.estudiantes} estudiantes`;
+                }
+            }
+            
+            if (window.app.tables.profesores) {
+                const profesoresCounter = document.getElementById('profesores-counter');
+                if (profesoresCounter) {
+                    profesoresCounter.textContent = `Total: ${this.stats.profesores} profesores`;
+                }
+            }
+        }
+    }
+
+    async refresh() {
+        const success = await this.loadStats();
+        if (success) {
+            this.updateUI();
+        }
+        return success;
+    }
+
+    getStats() {
+        return { ...this.stats };
+    }
+}
+
+// ============================================
+// INICIALIZACIÓN DE LA APLICACIÓN (MODIFICADA)
 // ============================================
 
 class App {
@@ -2067,6 +2177,7 @@ class App {
         this.navigation = null;
         this.forms = {};
         this.tables = {};
+        this.stats = null;
     }
 
     init() {
@@ -2074,6 +2185,9 @@ class App {
             // Inicializar componentes
             this.ui = new UIManager();
             this.navigation = new NavigationManager();
+            
+            // Inicializar estadísticas
+            this.stats = new StatsManager();
 
             // Inicializar formularios
             this.forms.student = new StudentFormHandler();
@@ -2086,6 +2200,7 @@ class App {
             console.log('Componentes cargados:', {
                 ui: !!this.ui,
                 navigation: !!this.navigation,
+                stats: !!this.stats,
                 forms: Object.keys(this.forms),
                 tables: Object.keys(this.tables)
             });

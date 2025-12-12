@@ -2214,6 +2214,224 @@ body {
 }
 
 /* ============================================
+   ESPACIADO CONSISTENTE PARA TABLAS DE REPORTES
+   ============================================ */
+
+/* Tabla de Estudiantes - Anchos de columna específicos */
+#tabla-estudiantes th:nth-child(1),
+#tabla-estudiantes td:nth-child(1) { /* ID */
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+}
+
+#tabla-estudiantes th:nth-child(2),
+#tabla-estudiantes td:nth-child(2) { /* Nombre */
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+}
+
+#tabla-estudiantes th:nth-child(3),
+#tabla-estudiantes td:nth-child(3) { /* Email */
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+#tabla-estudiantes th:nth-child(4),
+#tabla-estudiantes td:nth-child(4) { /* Grado */
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: center;
+}
+
+#tabla-estudiantes th:nth-child(5),
+#tabla-estudiantes td:nth-child(5) { /* Grupo */
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+}
+
+#tabla-estudiantes th:nth-child(6),
+#tabla-estudiantes td:nth-child(6) { /* Fecha Registro */
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    text-align: center;
+}
+
+#tabla-estudiantes th:nth-child(7),
+#tabla-estudiantes td:nth-child(7) { /* Acciones */
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+}
+
+/* Tabla de Profesores - Anchos de columna específicos */
+#tabla-profesores th:nth-child(1),
+#tabla-profesores td:nth-child(1) { /* ID */
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+}
+
+#tabla-profesores th:nth-child(2),
+#tabla-profesores td:nth-child(2) { /* Nombre */
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+}
+
+#tabla-profesores th:nth-child(3),
+#tabla-profesores td:nth-child(3) { /* Email */
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+#tabla-profesores th:nth-child(4),
+#tabla-profesores td:nth-child(4) { /* Asignaturas */
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
+}
+
+#tabla-profesores th:nth-child(5),
+#tabla-profesores td:nth-child(5) { /* Teléfono */
+    width: 130px;
+    min-width: 130px;
+    max-width: 130px;
+    text-align: center;
+}
+
+#tabla-profesores th:nth-child(6),
+#tabla-profesores td:nth-child(6) { /* Fecha Registro */
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    text-align: center;
+}
+
+#tabla-profesores th:nth-child(7),
+#tabla-profesores td:nth-child(7) { /* Acciones */
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+}
+
+/* Asegurar que las celdas de asignaturas muestren el contenido completo */
+#tabla-profesores td:nth-child(4) {
+    white-space: normal;
+    word-wrap: break-word;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+/* Mejorar el espaciado interno de las celdas */
+.data-table th,
+.data-table td {
+    padding: 16px 12px !important;
+    vertical-align: middle;
+}
+
+/* Asegurar que las tablas se ajusten al contenedor */
+.data-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Mejorar la apariencia del encabezado */
+.data-table thead th {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    padding: 18px 12px !important;
+    border: none;
+}
+
+.data-table thead th i {
+    color: white !important;
+}
+
+/* Alternar colores de filas para mejor legibilidad */
+.data-table tbody tr:nth-child(even) {
+    background-color: rgba(0, 51, 102, 0.03);
+}
+
+.data-table tbody tr:hover {
+    background-color: rgba(0, 51, 102, 0.08);
+}
+
+/* Ajustes responsivos para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .table-responsive {
+        border: 1px solid var(--gray-300);
+        border-radius: var(--border-radius-md);
+        overflow-x: auto;
+    }
+    
+    .data-table {
+        min-width: 900px;
+    }
+    
+    #tabla-estudiantes,
+    #tabla-profesores {
+        min-width: 900px;
+    }
+    
+    /* Ajustar tamaños de columna en móviles */
+    #tabla-estudiantes th:nth-child(2),
+    #tabla-estudiantes td:nth-child(2),
+    #tabla-profesores th:nth-child(2),
+    #tabla-profesores td:nth-child(2) {
+        min-width: 180px;
+        max-width: 180px;
+    }
+    
+    #tabla-estudiantes th:nth-child(3),
+    #tabla-estudiantes td:nth-child(3),
+    #tabla-profesores th:nth-child(3),
+    #tabla-profesores td:nth-child(3) {
+        min-width: 160px;
+        max-width: 160px;
+    }
+}
+
+/* Mejorar la visualización de las acciones */
+.table-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+    border: 1px solid var(--gray-300);
+    background-color: white;
+    color: var(--gray-700);
+    font-size: var(--font-size-sm);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
    SCROLLBARS
    ============================================ */
 ::-webkit-scrollbar {

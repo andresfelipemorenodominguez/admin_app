@@ -259,6 +259,7 @@ class EstudiantesTableManager extends TableManager {
             searchFields: ['nombre', 'email', 'id', 'grado', 'grupo']
         });
         this.loadData();
+        this.setupDeleteListeners();
     }
 
     async loadData() {
@@ -273,34 +274,139 @@ class EstudiantesTableManager extends TableManager {
                 this.updateCounters();
             } else {
                 console.error('Error cargando estudiantes:', result.message);
-                // Mostrar datos de ejemplo si falla
-                // Nota: SAMPLE_DATA no está definido en el archivo proporcionado,
-                // se mantendrá el código original pero se requeriría definirlo.
-                this.originalData = SAMPLE_DATA.estudiantes;
-                this.filteredData = [...SAMPLE_DATA.estudiantes];
+                // Datos vacíos en caso de error
+                this.originalData = [];
+                this.filteredData = [];
                 this.renderTable();
                 this.updateCounters();
             }
         } catch (error) {
             console.error('Error cargando datos de estudiantes:', error);
-            // Mostrar datos de ejemplo en caso de error
-            // Nota: SAMPLE_DATA no está definido en el archivo proporcionado,
-            // se mantendrá el código original pero se requeriría definirlo.
-            this.originalData = SAMPLE_DATA.estudiantes;
-            this.filteredData = [...SAMPLE_DATA.estudiantes];
+            // Datos vacíos en caso de error
+            this.originalData = [];
+            this.filteredData = [];
             this.renderTable();
             this.updateCounters();
         }
     }
 
-    renderRow(estudiante) {
-        // La variable estadoClass y estadoText no se usan en el HTML devuelto, se eliminan
-        // para mantener el código más limpio o se añadirían al HTML si fueran necesarias.
-        // const estadoClass = estudiante.estado === 'activo' ? 'badge-success' : 'badge-warning';
-        // const estadoText = estudiante.estado === 'activo' ? 'Activo' : 'Inactivo';
+    setupDeleteListeners() {
+        const table = document.getElementById(this.tableId);
+        if (!table) return;
 
+        table.addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.action-btn.delete');
+            if (!deleteBtn) return;
+
+            const codigo = deleteBtn.dataset.codigo;
+            const nombre = deleteBtn.closest('tr').querySelector('.nombre-cell').textContent;
+            
+            if (!codigo) return;
+
+            if (confirm(`¿Estás seguro de que deseas eliminar al estudiante "${nombre}" (${codigo})? Esta acción no se puede deshacer.`)) {
+                await this.deleteEstudiante(codigo, deleteBtn.closest('tr'));
+            }
+        });
+    }
+
+    async deleteEstudiante(codigo, rowElement) {
+        try {
+            // Mostrar indicador de carga
+            const deleteBtn = rowElement.querySelector('.action-btn.delete');
+            const originalHTML = deleteBtn.innerHTML;
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            deleteBtn.disabled = true;
+
+            // Enviar solicitud de eliminación
+            const response = await fetch('/eliminar-estudiante', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ codigo: codigo })
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                // Eliminar fila de la tabla
+                rowElement.remove();
+                
+                // Actualizar contadores
+                this.originalData = this.originalData.filter(est => est.id !== codigo);
+                this.filteredData = this.filteredData.filter(est => est.id !== codigo);
+                this.updateCounters();
+                
+                // Mostrar mensaje de éxito
+                this.showMessage(result.message, 'success');
+            } else {
+                this.showMessage(result.message, 'error');
+                // Restaurar botón
+                deleteBtn.innerHTML = originalHTML;
+                deleteBtn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error eliminando estudiante:', error);
+            this.showMessage('Error al conectar con el servidor', 'error');
+            
+            // Restaurar botón
+            const deleteBtn = rowElement.querySelector('.action-btn.delete');
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.disabled = false;
+        }
+    }
+
+    showMessage(message, type) {
+        // Crear o reutilizar contenedor de mensajes
+        let messageContainer = document.getElementById('table-message-container');
+        if (!messageContainer) {
+            messageContainer = document.createElement('div');
+            messageContainer.id = 'table-message-container';
+            messageContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                max-width: 300px;
+            `;
+            document.body.appendChild(messageContainer);
+        }
+
+        const messageElement = document.createElement('div');
+        messageElement.className = `table-message ${type}`;
+        messageElement.innerHTML = `
+            <div style="
+                padding: 12px 16px;
+                border-radius: 6px;
+                margin-bottom: 10px;
+                background: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+                color: ${type === 'success' ? '#155724' : '#721c24'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'};
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            ">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+
+        messageContainer.appendChild(messageElement);
+
+        // Eliminar mensaje después de 5 segundos
+        setTimeout(() => {
+            messageElement.style.opacity = '0';
+            messageElement.style.transition = 'opacity 0.3s';
+            setTimeout(() => {
+                messageElement.remove();
+            }, 300);
+        }, 5000);
+    }
+
+    renderRow(estudiante) {
         return `
-            <tr>
+            <tr data-codigo="${estudiante.id}">
                 <td>
                     <span class="table-badge badge-primary">${estudiante.id}</span>
                 </td>
@@ -321,7 +427,7 @@ class EstudiantesTableManager extends TableManager {
                         <button class="action-btn edit" title="Editar">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="action-btn delete" title="Eliminar">
+                        <button class="action-btn delete" title="Eliminar" data-codigo="${estudiante.id}">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -347,6 +453,7 @@ class ProfesoresTableManager extends TableManager {
             searchFields: ['nombre', 'email', 'id', 'asignaturas', 'telefono']
         });
         this.loadData();
+        this.setupDeleteListeners();
     }
 
     async loadData() {
@@ -361,38 +468,143 @@ class ProfesoresTableManager extends TableManager {
                 this.updateCounters();
             } else {
                 console.error('Error cargando profesores:', result.message);
-                // Mostrar datos de ejemplo si falla
-                // Nota: SAMPLE_DATA no está definido en el archivo proporcionado,
-                // se mantendrá el código original pero se requeriría definirlo.
-                this.originalData = SAMPLE_DATA.profesores;
-                this.filteredData = [...SAMPLE_DATA.profesores];
+                // Datos vacíos en caso de error
+                this.originalData = [];
+                this.filteredData = [];
                 this.renderTable();
                 this.updateCounters();
             }
         } catch (error) {
             console.error('Error cargando datos de profesores:', error);
-            // Mostrar datos de ejemplo en caso de error
-            // Nota: SAMPLE_DATA no está definido en el archivo proporcionado,
-            // se mantendrá el código original pero se requeriría definirlo.
-            this.originalData = SAMPLE_DATA.profesores;
-            this.filteredData = [...SAMPLE_DATA.profesores];
+            // Datos vacíos en caso de error
+            this.originalData = [];
+            this.filteredData = [];
             this.renderTable();
             this.updateCounters();
         }
     }
 
-    renderRow(profesor) {
-        const estadoClass = profesor.estado === 'activo' ? 'badge-success' :
-                           profesor.estado === 'licencia' ? 'badge-warning' : 'badge-primary';
-        const estadoText = profesor.estado === 'activo' ? 'Activo' :
-                          profesor.estado === 'licencia' ? 'En licencia' : 'Inactivo';
+    setupDeleteListeners() {
+        const table = document.getElementById(this.tableId);
+        if (!table) return;
 
+        table.addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.action-btn.delete');
+            if (!deleteBtn) return;
+
+            const codigo = deleteBtn.dataset.codigo;
+            const nombre = deleteBtn.closest('tr').querySelector('.nombre-cell').textContent;
+            
+            if (!codigo) return;
+
+            if (confirm(`¿Estás seguro de que deseas eliminar al profesor "${nombre}" (${codigo})? Esta acción no se puede deshacer.`)) {
+                await this.deleteProfesor(codigo, deleteBtn.closest('tr'));
+            }
+        });
+    }
+
+    async deleteProfesor(codigo, rowElement) {
+        try {
+            // Mostrar indicador de carga
+            const deleteBtn = rowElement.querySelector('.action-btn.delete');
+            const originalHTML = deleteBtn.innerHTML;
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            deleteBtn.disabled = true;
+
+            // Enviar solicitud de eliminación
+            const response = await fetch('/eliminar-profesor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ codigo: codigo })
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                // Eliminar fila de la tabla
+                rowElement.remove();
+                
+                // Actualizar contadores
+                this.originalData = this.originalData.filter(prof => prof.id !== codigo);
+                this.filteredData = this.filteredData.filter(prof => prof.id !== codigo);
+                this.updateCounters();
+                
+                // Mostrar mensaje de éxito
+                this.showMessage(result.message, 'success');
+            } else {
+                this.showMessage(result.message, 'error');
+                // Restaurar botón
+                deleteBtn.innerHTML = originalHTML;
+                deleteBtn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error eliminando profesor:', error);
+            this.showMessage('Error al conectar con el servidor', 'error');
+            
+            // Restaurar botón
+            const deleteBtn = rowElement.querySelector('.action-btn.delete');
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.disabled = false;
+        }
+    }
+
+    showMessage(message, type) {
+        // Crear o reutilizar contenedor de mensajes
+        let messageContainer = document.getElementById('table-message-container');
+        if (!messageContainer) {
+            messageContainer = document.createElement('div');
+            messageContainer.id = 'table-message-container';
+            messageContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                max-width: 300px;
+            `;
+            document.body.appendChild(messageContainer);
+        }
+
+        const messageElement = document.createElement('div');
+        messageElement.className = `table-message ${type}`;
+        messageElement.innerHTML = `
+            <div style="
+                padding: 12px 16px;
+                border-radius: 6px;
+                margin-bottom: 10px;
+                background: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+                color: ${type === 'success' ? '#155724' : '#721c24'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'};
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            ">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+
+        messageContainer.appendChild(messageElement);
+
+        // Eliminar mensaje después de 5 segundos
+        setTimeout(() => {
+            messageElement.style.opacity = '0';
+            messageElement.style.transition = 'opacity 0.3s';
+            setTimeout(() => {
+                messageElement.remove();
+            }, 300);
+        }, 5000);
+    }
+
+    renderRow(profesor) {
         const asignaturasText = profesor.asignaturas && profesor.asignaturas.length > 2
             ? `${profesor.asignaturas.slice(0, 2).join(', ')}...`
             : (profesor.asignaturas ? profesor.asignaturas.join(', ') : '');
 
         return `
-            <tr>
+            <tr data-codigo="${profesor.id}">
                 <td>
                     <span class="table-badge badge-primary">${profesor.id}</span>
                 </td>
@@ -411,7 +623,7 @@ class ProfesoresTableManager extends TableManager {
                         <button class="action-btn edit" title="Editar">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="action-btn delete" title="Eliminar">
+                        <button class="action-btn delete" title="Eliminar" data-codigo="${profesor.id}">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>

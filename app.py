@@ -1736,6 +1736,98 @@ def obtener_profesores():
     except Exception as e:
         print(f"Error obteniendo profesores: {e}")
         return jsonify({"status": "error", "message": "Error al obtener los datos."})
+    
+# 📌 RUTA PARA ELIMINAR ESTUDIANTE (POST)
+@app.route("/eliminar-estudiante", methods=["POST"])
+def eliminar_estudiante():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    data = request.get_json()
+    
+    codigo_estudiante = data.get("codigo")
+    
+    if not codigo_estudiante:
+        return jsonify({"status": "error", "message": "Código de estudiante requerido."})
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Verificar si el estudiante existe
+        check_query = "SELECT id_estudiante FROM estudiantes WHERE codigo_estudiante = %s"
+        cur.execute(check_query, (codigo_estudiante,))
+        estudiante = cur.fetchone()
+        
+        if not estudiante:
+            return jsonify({"status": "error", "message": "Estudiante no encontrado."})
+        
+        # Eliminar el estudiante
+        delete_query = "DELETE FROM estudiantes WHERE codigo_estudiante = %s"
+        cur.execute(delete_query, (codigo_estudiante,))
+        conn.commit()
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "message": "Estudiante eliminado exitosamente!"
+        })
+        
+    except psycopg2.Error as e:
+        print(f"Database error al eliminar estudiante: {e}")
+        return jsonify({"status": "error", "message": "Error en la base de datos."})
+    except Exception as e:
+        print(f"Error eliminando estudiante: {e}")
+        return jsonify({"status": "error", "message": "Error al eliminar el estudiante."})
+
+# 📌 RUTA PARA ELIMINAR PROFESOR (POST)
+@app.route("/eliminar-profesor", methods=["POST"])
+def eliminar_profesor():
+    # Verificar si el usuario está logueado
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Debes iniciar sesión primero."})
+    
+    data = request.get_json()
+    
+    codigo_profesor = data.get("codigo")
+    
+    if not codigo_profesor:
+        return jsonify({"status": "error", "message": "Código de profesor requerido."})
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Verificar si el profesor existe
+        check_query = "SELECT id_profesor FROM profesores WHERE codigo_profesor = %s"
+        cur.execute(check_query, (codigo_profesor,))
+        profesor = cur.fetchone()
+        
+        if not profesor:
+            return jsonify({"status": "error", "message": "Profesor no encontrado."})
+        
+        # Eliminar el profesor
+        delete_query = "DELETE FROM profesores WHERE codigo_profesor = %s"
+        cur.execute(delete_query, (codigo_profesor,))
+        conn.commit()
+        
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "message": "Profesor eliminado exitosamente!"
+        })
+        
+    except psycopg2.Error as e:
+        print(f"Database error al eliminar profesor: {e}")
+        return jsonify({"status": "error", "message": "Error en la base de datos."})
+    except Exception as e:
+        print(f"Error eliminando profesor: {e}")
+        return jsonify({"status": "error", "message": "Error al eliminar el profesor."})
 
 if __name__ == "__main__":
     app.run(debug=True)

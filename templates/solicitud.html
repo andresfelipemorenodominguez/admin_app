@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Cambio de Contraseña</title>
+    <link rel="stylesheet" href="consa.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-key"></i> Cambio de Contraseña</h1>
+            <p class="instructions">Por favor, ingresa tu Identificador de Usuario, tu Correo Electrónico Registrado y una breve explicación del motivo. La solicitud se enviará al administrador del sistema, quien la procesará y te responderá.</p>
+        </header>
+
+        <main>
+            <form id="passwordRequestForm" class="form">
+                <div class="form-group">
+                    <label for="userIdentifier"><i class="fas fa-user"></i> Identificador de Usuario</label>
+                    <input type="text" id="userIdentifier" name="userIdentifier" required placeholder="Ej: usuario123">
+                    <div class="error-message" id="userIdentifierError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userEmail"><i class="fas fa-envelope"></i> Correo Electrónico Registrado</label>
+                    <input type="email" id="userEmail" name="userEmail" required placeholder="tucorreo@ejemplo.com">
+                    <div class="error-message" id="userEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="requestReason"><i class="fas fa-comment"></i> Motivo de la Solicitud</label>
+                    <textarea id="requestReason" name="requestReason" rows="5" required placeholder="Explica brevemente por qué necesitas cambiar o restablecer tu contraseña..."></textarea>
+                    <div class="error-message" id="requestReasonError"></div>
+                </div>
+
+                <!-- Campos ocultos del administrador -->
+                <input type="hidden" id="adminId" name="adminId" value="ADM001">
+                <input type="hidden" id="adminName" name="adminName" value="Administrador del Sistema">
+                <input type="hidden" id="adminEmail" name="adminEmail" value="admin@sistema.com">
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Enviar Solicitud de Restablecimiento
+                    </button>
+                    <button type="button" id="backToLogin" class="btn btn-secondary">
+                        <i class="fas fa-sign-in-alt"></i> Volver a Iniciar Sesión
+                    </button>
+                </div>
+            </form>
+
+            <!-- Mensaje de éxito (inicialmente oculto) -->
+            <div id="successMessage" class="success-message hidden">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Solicitud enviada con éxito</h2>
+                <p>Tu solicitud ha sido enviada al administrador del sistema (<strong>Administrador del Sistema</strong>, admin@sistema.com).</p>
+                <p>El administrador revisará tu solicitud y se pondrá en contacto contigo en la dirección de correo proporcionada para continuar con el proceso.</p>
+                <button type="button" id="newRequest" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i> Nueva Solicitud
+                </button>
+            </div>
+
+            <!-- Mensaje de error (inicialmente oculto) -->
+            <div id="errorMessage" class="error-message-container hidden">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h2>Error al enviar la solicitud</h2>
+                <p>Lo sentimos, ha ocurrido un problema al enviar tu solicitud. Por favor, inténtalo de nuevo o contacta al soporte técnico.</p>
+                <button type="button" id="tryAgain" class="btn btn-primary">
+                    <i class="fas fa-redo"></i> Intentar de nuevo
+                </button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Sistema de Gestión de Contraseñas &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

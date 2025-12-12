@@ -19,9 +19,9 @@ app.secret_key = 'tu_clave_secreta_aqui'  # Necesaria para sesiones
 # -------------------------
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_USER = "miboletin5@gmail.com"
-EMAIL_PASSWORD = "oshx qaxu ugdo baql"
-EMAIL_FROM = "MiBoletínAdmin.com <miboletin5@gmail.com>"
+EMAIL_USER = "andresdevbod@gmail.com"
+EMAIL_PASSWORD = "lkrx ciua qxsl maqo"
+EMAIL_FROM = "MiBoletínAdmin.com <andresdevbod@gmail.com>"
 
 # -------------------------
 # 🔌 CONFIGURACIÓN DATABASE

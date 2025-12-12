@@ -435,6 +435,54 @@ class EstudiantesTableManager extends TableManager {
             </tr>
         `;
     }
+
+    renderTable() {
+        const tableBody = document.querySelector(`#${this.tableId} tbody`);
+        if (!tableBody) return;
+
+        // Caso: Tabla vacía (sin estudiantes registrados)
+        if (this.filteredData.length === 0 && !this.currentSearchTerm) {
+            const colSpan = document.querySelector(`#${this.tableId} thead tr`).children.length;
+            tableBody.innerHTML = `
+                <tr class="no-results">
+                    <td colspan="${colSpan}">
+                        <div class="empty-state">
+                            <i class="fas fa-user-graduate"></i>
+                            <h3>No hay ningún estudiante registrado</h3>
+                            <p>Comienza agregando estudiantes usando el formulario "Agregar Estudiante"</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Caso: Búsqueda sin resultados
+        if (this.filteredData.length === 0 && this.currentSearchTerm) {
+            const colSpan = document.querySelector(`#${this.tableId} thead tr`).children.length;
+            tableBody.innerHTML = `
+                <tr class="no-results">
+                    <td colspan="${colSpan}">
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <h3>No se encontraron resultados con "${this.currentSearchTerm}"</h3>
+                            <p>Intenta con otros términos de búsqueda</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Caso normal: Mostrar datos
+        tableBody.innerHTML = this.filteredData.map(item => this.renderRow(item)).join('');
+    }
+
+    filterData(searchTerm) {
+        this.currentSearchTerm = searchTerm; // Guardar el término de búsqueda actual
+        const searchFields = this.options.searchFields || ['nombre', 'email', 'id', 'grado', 'grupo'];
+        this.filteredData = Utils.filterTableData(this.originalData, searchTerm, searchFields);
+    }
 }
 
 // ============================================
@@ -630,6 +678,54 @@ class ProfesoresTableManager extends TableManager {
                 </td>
             </tr>
         `;
+    }
+
+    renderTable() {
+        const tableBody = document.querySelector(`#${this.tableId} tbody`);
+        if (!tableBody) return;
+
+        // Caso: Tabla vacía (sin profesores registrados)
+        if (this.filteredData.length === 0 && !this.currentSearchTerm) {
+            const colSpan = document.querySelector(`#${this.tableId} thead tr`).children.length;
+            tableBody.innerHTML = `
+                <tr class="no-results">
+                    <td colspan="${colSpan}">
+                        <div class="empty-state">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <h3>No hay ningún profesor registrado</h3>
+                            <p>Comienza agregando profesores usando el formulario "Agregar Profesor"</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Caso: Búsqueda sin resultados
+        if (this.filteredData.length === 0 && this.currentSearchTerm) {
+            const colSpan = document.querySelector(`#${this.tableId} thead tr`).children.length;
+            tableBody.innerHTML = `
+                <tr class="no-results">
+                    <td colspan="${colSpan}">
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <h3>No se encontraron resultados con "${this.currentSearchTerm}"</h3>
+                            <p>Intenta con otros términos de búsqueda</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Caso normal: Mostrar datos
+        tableBody.innerHTML = this.filteredData.map(item => this.renderRow(item)).join('');
+    }
+
+    filterData(searchTerm) {
+        this.currentSearchTerm = searchTerm; // Guardar el término de búsqueda actual
+        const searchFields = this.options.searchFields || ['nombre', 'email', 'id', 'asignaturas', 'telefono'];
+        this.filteredData = Utils.filterTableData(this.originalData, searchTerm, searchFields);
     }
 }
 

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Institucional - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+</head>
+
+
+<body>
+
+    <!-- Header/Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="{{ url_for('loginuser') }}" class="logo-link">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='img/logo-removebg-preview.png') }}" alt="Logo Institución Educativa" class="logo-img">
+                    <span class="logo-text">MI BOLETÍN</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('loginuser') }}"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#acerca"><i class="fas fa-info-circle"></i> Acerca de</a></li>
+                <li><a href="#equipo"><i class="fas fa-users"></i> Equipo</a></li>
+                <li><a href="#contacto"><i class="fas fa-envelope"></i> Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal / imagen -->
+    <main class="main-content">
+        <section class="image-column">
+            <div class="svg-container">
+                <img src="{{ url_for('static', filename='img/undraw_secure-login_m11a.svg') }}"  
+                    alt="Programación y Educación" 
+                    class="programming-svg">
+            </div>
+        </section>
+
+        <!-- Formulario de login -->
+        <section class="form-section">
+            
+            <div class="login-container">
+                <div class="login-header">
+                    <h1><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h1>
+                </div>
+
+                <form action="{{ url_for('loginuser') }}" method="POST" class="login-form">
+                    <div class="form-group">
+                        <label for="correo">
+                            <i class="fas fa-envelope"></i> Correo Electrónico:
+                        </label>
+                        <input type="email" id="correo" name="correo" placeholder="usuario@gmail.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contraseña">
+                            <i class="fas fa-lock"></i> Contraseña:
+                        </label>
+                        <input type="password" id="contraseña" name="contraseña" placeholder="Ingresa tu contraseña" required>
+                    </div>
+
+                    <div class="form-options">
+                        <a href="{{ url_for('forgot_password') }}" class="forgot-password">
+                            ¿Olvidaste tu contraseña?
+                        </a>
+                    </div>
+
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Ingresar
+                    </button>
+
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Acerca de -->
+    <section id="acerca" class="info-section">
+        <div class="info-content">
+            <h1><i class="fas fa-circle-info"></i> Acerca de Nosotros</h1>
+
+            <p class="slogan">Tecnología que impulsa el aprendizaje</p>
+
+            <div class="mission">
+                <p>
+                    Somos una plataforma creada para acompañar y fortalecer los procesos educativos 
+                    mediante herramientas digitales intuitivas, seguras y accesibles. Nuestro objetivo 
+                    es brindar soluciones que faciliten la comunicación entre estudiantes, docentes 
+                    y la comunidad educativa.
+                </p>
+            </div>
+
+            <div class="highlight">
+                <i class="fas fa-users"></i>
+                <span>Diseñada para todos los miembros de la comunidad educativa.</span>
+            </div>
+
+            <div class="highlight">
+                <i class="fas fa-lightbulb"></i>
+                <span>Desarrollo continuo para mejorar cada experiencia de aprendizaje.</span>
+            </div>
+
+            <div class="highlight">
+                <i class="fas fa-shield-alt"></i>
+                <span>Compromiso con la protección y privacidad de la información.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Características -->
+    <section id="caracteristicas" class="features-section">
+        <div class="features-container">
+            <h1><i class="fas fa-star"></i> ¿Por qué elegir nuestra plataforma?</h1>
+            <p class="features-subtitle">
+                Descubre las ventajas que ofrecemos a la comunidad educativa
+            </p>
+
+            <div class="features-grid">
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Calendario Académico</h3>
+                    <p>
+                        Consulta fechas importantes como exámenes, entregas de trabajos y días festivos.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Comunicación Directa</h3>
+                    <p>
+                        Los profesores pueden enviar observaciones sobre el rendimiento directamente a los estudiantes.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Reportes Detallados</h3>
+                    <p>
+                        Genera reportes personalizados del rendimiento académico de los estudiantes.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Tiempo Real</h3>
+                    <p>
+                        Actualización instantánea de calificaciones y notificaciones inmediatas para padres y estudiantes.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Nuestro Equipo -->
+    <section id="equipo" class="team-section">
+        <div class="team-container">
+            <h1><i class="fas fa-users"></i> Nuestro Equipo</h1>
+            <p class="team-subtitle">
+                Conoce a las personas que hacen posible esta plataforma educativa.
+            </p>
+
+            <div class="team-grid">
+
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='img/portrait-handsome-smiling-young-man-folded-arms-smiling-joyful-cheerful-men-crossed-hands-isolated-studio-shot-172869765.webp') }}" alt="Miembro del equipo">
+                    <h3>Jesús Aragón</h3>
+                    <p class="team-role">Bases de datos</p>
+                    <p class="team-desc">Encargado del diseño, administración y optimización de las bases de datos del sistema.</p>
+                    <a href="{{ url_for('static', filename='Hojas_de_vida/Hoja_de_Vida_Jesus/index.html') }}" class="team-btn" target="_blank">Más información</a>
+                </div>
+
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='img/portrait-handsome-smiling-young-man-folded-arms-smiling-joyful-cheerful-men-crossed-hands-isolated-studio-shot-172869765.webp') }}" alt="Miembro del equipo">
+                    <h3>Estevan Portilla</h3>
+                    <p class="team-role">Desarrollador Back-End</p>
+                    <p class="team-desc">Participa en la creación de servicios backend para mejorar la experiencia del usuario.</p>
+                    <a href="{{ url_for('static', filename='Hojas_de_vida/Hoja_de_Vida_Portilla/index.html') }}" class="team-btn" target="_blank">Más información</a>
+                </div>
+
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='img/portrait-handsome-smiling-young-man-folded-arms-smiling-joyful-cheerful-men-crossed-hands-isolated-studio-shot-172869765.webp') }}" alt="Miembro del equipo">
+                    <h3>José Sánchez</h3>
+                    <p class="team-role">Diseño visual / Front-End</p>
+                    <p class="team-desc">Encargado del diseño visual y la implementación de interfaces modernas y responsivas.</p>
+                    <a href="{{ url_for('static', filename='Hojas_de_vida/Hoja_de_Vida_Manuel/index.html') }}" class="team-btn" target="_blank">Más información</a>
+                </div>
+
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='img/portrait-handsome-smiling-young-man-folded-arms-smiling-joyful-cheerful-men-crossed-hands-isolated-studio-shot-172869765.webp') }}" alt="Miembro del equipo">
+                    <h3>Andrés Moreno</h3>
+                    <p class="team-role">Desarrollador Back-End</p>
+                    <p class="team-desc">Diseña contenidos pedagógicos para una mejor experiencia de aprendizaje.</p>
+                    <a href="{{ url_for('static', filename='Hojas_de_vida/Hoja-de-Vida_Moreno/index.html') }}" class="team-btn" target="_blank">Más información</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Cactacto -->
+    <section id="contacto" class="contact-section">
+        <div class="contact-container">
+            <h1><i class="fas fa-envelope"></i> Contáctanos</h1>
+            <p class="contact-subtitle">
+                Estamos disponibles para ayudarte en cualquier momento.
+            </p>
+
+            <div class="contact-grid">
+                
+                <div class="contact-card">
+                    <i class="fas fa-phone"></i>
+                    <h3>Teléfono</h3>
+                    <p>+57 323 317 5941</p>
+                </div>
+
+                <div class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Correo</h3>
+                    <p>miboletincontac@gmail.com</p>
+                </div>
+
+                <div class="contact-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Dirección</h3>
+                    <p>Calle 28 # 28 - 48, Colombia</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section footer-logo-section">
+                <a href="{{ url_for('loginuser') }}" class="footer-logo-link">
+                    <div class="footer-logo">
+                        <img src="{{ url_for('static', filename='img/logo-removebg-preview.png') }}" alt="Logo Institución Educativa" class="footer-logo-img">
+                        <span class="footer-logo-text">MI BOLETÍN</span>
+                    </div>
+                </a>
+                <p class="footer-mission">Promoviendo la innovación digital y la excelencia académica.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3><i class="fas fa-link"></i> Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="{{ url_for('loginuser') }}"><i class="fas fa-angle-right"></i> Inicio</a></li>
+                    <li><a href="#acerca"><i class="fas fa-angle-right"></i> Acerca de</a></li>
+                    <li><a href="#equipo"><i class="fas fa-angle-right"></i> Equipo</a></li>
+                    <li><a href="#contacto"><i class="fas fa-angle-right"></i> Contacto</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3><i class="fas fa-envelope"></i> Contacto</h3>
+                <p><i class="fas fa-phone"></i> +57 323 317 5941</p>
+                <p><i class="fas fa-envelope"></i> miboletincontac@gmail.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> Calle 28 # 28 - 48, Colombia</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 MI BOLETÍN. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body> 
+</html>

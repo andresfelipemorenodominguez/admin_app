@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import psycopg2
 from psycopg2 import sql
 from datetime import datetime
@@ -7,6 +7,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'tu_clave_secreta_aqui'
@@ -62,9 +63,117 @@ def enviar_correo_admin(destinatario, asunto, cuerpo_html, cuerpo_texto=""):
 def index():
     return render_template('loginuser.html')
 
-@app.route('/loginuser')
+# Modificar la ruta loginuser para manejar POST
+@app.route('/loginuser', methods=['GET', 'POST'])
 def loginuser():
-    return render_template('loginuser.html')
+    if request.method == 'GET':
+        return render_template('loginuser.html')
+    
+    elif request.method == 'POST':
+        # Obtener datos del formulario
+        user_identifier = request.form.get('userIdentifier')
+        user_email = request.form.get('correo')
+        password = request.form.get('contraseña')
+        
+        # Validar que todos los campos estén presentes
+        if not all([user_identifier, user_email, password]):
+            return render_template('loginuser.html', 
+                                 error='Todos los campos son requeridos')
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        try:
+            # Buscar primero como estudiante
+            cur.execute(
+                'SELECT id_estudiante, nombre_completo, codigo_estudiante, contrasena FROM estudiantes WHERE codigo_estudiante = %s AND correo_electronico = %s;',
+                (user_identifier, user_email)
+            )
+            estudiante = cur.fetchone()
+            
+            if estudiante:
+                # Verificar contraseña (asumiendo que está hasheada con bcrypt)
+                if bcrypt.checkpw(password.encode('utf-8'), estudiante[3].encode('utf-8')):
+                    session['user_info'] = {
+                        'tipo': 'estudiante',
+                        'id': estudiante[0],
+                        'nombre': estudiante[1],
+                        'codigo': estudiante[2]
+                    }
+                    cur.close()
+                    conn.close()
+                    return redirect(url_for('estudiante_dashboard'))
+                else:
+                    return render_template('loginuser.html', 
+                                         error='Contraseña incorrecta')
+            
+            # Si no es estudiante, buscar como profesor
+            cur.execute(
+                'SELECT id_profesor, nombre_completo, codigo_profesor, contrasena FROM profesores WHERE codigo_profesor = %s AND correo_electronico = %s;',
+                (user_identifier, user_email)
+            )
+            profesor = cur.fetchone()
+            
+            if profesor:
+                # Verificar contraseña
+                if bcrypt.checkpw(password.encode('utf-8'), profesor[3].encode('utf-8')):
+                    session['user_info'] = {
+                        'tipo': 'profesor',
+                        'id': profesor[0],
+                        'nombre': profesor[1],
+                        'codigo': profesor[2]
+                    }
+                    cur.close()
+                    conn.close()
+                    return redirect(url_for('profesor_dashboard'))
+                else:
+                    return render_template('loginuser.html', 
+                                         error='Contraseña incorrecta')
+            
+            # Si no se encontró en ninguna tabla
+            return render_template('loginuser.html', 
+                                 error='Usuario no encontrado. Verifica tu identificador y correo electrónico.')
+            
+        except Exception as e:
+            print(f"Error en login: {str(e)}")
+            return render_template('loginuser.html', 
+                                 error='Error en el servidor. Intenta más tarde.')
+        finally:
+            if cur:
+                cur.close()
+            if conn:
+                conn.close()
+
+# Agregar rutas para los dashboards
+@app.route('/estudiante')
+def estudiante_dashboard():
+    # Verificar que el usuario esté logueado y sea estudiante
+    user_info = session.get('user_info')
+    
+    if not user_info or user_info.get('tipo') != 'estudiante':
+        return redirect(url_for('loginuser'))
+    
+    return render_template('estudiante.html', 
+                         nombre=user_info['nombre'],
+                         codigo=user_info['codigo'])
+
+@app.route('/profesor')
+def profesor_dashboard():
+    # Verificar que el usuario esté logueado y sea profesor
+    user_info = session.get('user_info')
+    
+    if not user_info or user_info.get('tipo') != 'profesor':
+        return redirect(url_for('loginuser'))
+    
+    return render_template('profesor.html', 
+                         nombre=user_info['nombre'],
+                         codigo=user_info['codigo'])
+
+# Ruta para cerrar sesión
+@app.route('/logout')
+def logout():
+    session.pop('user_info', None)
+    return redirect(url_for('loginuser'))
 
 @app.route('/solicitud_user')
 def solicitud_user():

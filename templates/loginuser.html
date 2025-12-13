@@ -55,22 +55,32 @@
                         <label for="userIdentifier">
                             <i class="fas fa-user"></i> Identificador de Usuario:
                         </label>
-                        <input type="text" id="userIdentifier" name="userIdentifier" placeholder="Ej: EST001, PROF001" required>
+                        <input type="text" id="userIdentifier" name="userIdentifier" 
+                            placeholder="Ej: EST001, PROF001" required>
                     </div>
 
                     <div class="form-group">
                         <label for="correo">
                             <i class="fas fa-envelope"></i> Correo Electrónico:
                         </label>
-                        <input type="email" id="correo" name="correo" placeholder="usuario@gmail.com" required>
+                        <input type="email" id="correo" name="correo" 
+                            placeholder="usuario@gmail.com" required>
                     </div>
 
                     <div class="form-group">
                         <label for="contraseña">
                             <i class="fas fa-lock"></i> Contraseña:
                         </label>
-                        <input type="password" id="contraseña" name="contraseña" placeholder="Ingresa tu contraseña" required>
+                        <input type="password" id="contraseña" name="contraseña" 
+                            placeholder="Ingresa tu contraseña" required>
                     </div>
+
+                    <!-- Mostrar mensaje de error si existe -->
+                    {% if error %}
+                    <div class="error-message" style="color: red; margin: 10px 0; padding: 10px; background-color: #ffe6e6; border-radius: 5px;">
+                        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                    </div>
+                    {% endif %}
 
                     <div class="form-options">
                         <a href="{{ url_for('solicitud_user') }}" class="forgot-password">
@@ -81,7 +91,6 @@
                     <button type="submit" class="login-btn">
                         <i class="fas fa-sign-in-alt"></i> Ingresar
                     </button>
-
                 </form>
             </div>
         </section>

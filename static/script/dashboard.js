@@ -295,25 +295,16 @@ class EstudiantesTableManager extends TableManager {
         if (!table) return;
 
         table.addEventListener('click', async (e) => {
-            // Manejar eliminación
             const deleteBtn = e.target.closest('.action-btn.delete');
-            if (deleteBtn) {
-                // ... código existente para eliminar ...
-            }
+            if (!deleteBtn) return;
 
-            // Manejar edición
-            const editBtn = e.target.closest('.action-btn.edit');
-            if (editBtn) {
-                const row = editBtn.closest('tr');
-                const estudianteId = row.dataset.codigo;
-                const estudiante = this.originalData.find(est => est.id === estudianteId);
-                
-                if (estudiante) {
-                    // Abrir modal de edición
-                    if (window.app && window.app.ui) {
-                        window.app.ui.openEditEstudianteModal(estudiante);
-                    }
-                }
+            const codigo = deleteBtn.dataset.codigo;
+            const nombre = deleteBtn.closest('tr').querySelector('.nombre-cell').textContent;
+            
+            if (!codigo) return;
+
+            if (confirm(`¿Estás seguro de que deseas eliminar al estudiante "${nombre}" (${codigo})? Esta acción no se puede deshacer.`)) {
+                await this.deleteEstudiante(codigo, deleteBtn.closest('tr'));
             }
         });
     }
@@ -551,25 +542,16 @@ class ProfesoresTableManager extends TableManager {
         if (!table) return;
 
         table.addEventListener('click', async (e) => {
-            // Manejar eliminación
             const deleteBtn = e.target.closest('.action-btn.delete');
-            if (deleteBtn) {
-                // ... código existente para eliminar ...
-            }
+            if (!deleteBtn) return;
 
-            // Manejar edición
-            const editBtn = e.target.closest('.action-btn.edit');
-            if (editBtn) {
-                const row = editBtn.closest('tr');
-                const profesorId = row.dataset.codigo;
-                const profesor = this.originalData.find(prof => prof.id === profesorId);
-                
-                if (profesor) {
-                    // Abrir modal de edición
-                    if (window.app && window.app.ui) {
-                        window.app.ui.openEditProfesorModal(profesor);
-                    }
-                }
+            const codigo = deleteBtn.dataset.codigo;
+            const nombre = deleteBtn.closest('tr').querySelector('.nombre-cell').textContent;
+            
+            if (!codigo) return;
+
+            if (confirm(`¿Estás seguro de que deseas eliminar al profesor "${nombre}" (${codigo})? Esta acción no se puede deshacer.`)) {
+                await this.deleteProfesor(codigo, deleteBtn.closest('tr'));
             }
         });
     }
@@ -1749,7 +1731,6 @@ class UIManager {
         this.setupPasswordToggles();
         this.updateCurrentDate();
         this.setupResizeHandler();
-        this.setupEditModals();
     }
 
     setupModals() {
@@ -1766,14 +1747,6 @@ class UIManager {
         // Modal de cambiar contraseña
         this.modals.changePassword = new ModalManager('change-password-modal', {
             closeBtnId: 'change-password-close-btn'
-        });
-
-        this.modals.editEstudiante = new ModalManager('edit-estudiante-modal', {
-            closeBtnId: 'edit-estudiante-close-btn'
-        });
-
-        this.modals.editProfesor = new ModalManager('edit-profesor-modal', {
-            closeBtnId: 'edit-profesor-close-btn'
         });
 
         // Configurar interacciones entre modales
@@ -1796,262 +1769,6 @@ class UIManager {
             }
         });
     }
-
-    setupEditModals() {
-        // Modal editar estudiante
-        document.getElementById('cancel-edit-estudiante-btn')?.addEventListener('click', () => {
-            this.modals.editEstudiante.close();
-        });
-
-        const editEstudianteForm = document.getElementById('edit-estudiante-form');
-        if (editEstudianteForm) {
-            editEstudianteForm.addEventListener('submit', (e) => this.handleEditEstudiante(e));
-        }
-
-        // Modal editar profesor
-        document.getElementById('cancel-edit-profesor-btn')?.addEventListener('click', () => {
-            this.modals.editProfesor.close();
-        });
-
-        const editProfesorForm = document.getElementById('edit-profesor-form');
-        if (editProfesorForm) {
-            editProfesorForm.addEventListener('submit', (e) => this.handleEditProfesor(e));
-        }
-
-        // Actualizar contador de asignaturas en tiempo real
-        const editAsignaturasSelect = document.getElementById('edit-profesor-asignaturas');
-        if (editAsignaturasSelect) {
-            editAsignaturasSelect.addEventListener('change', () => {
-                this.updateEditAsignaturasCount();
-            });
-        }
-    }
-
-    updateEditAsignaturasCount() {
-        const select = document.getElementById('edit-profesor-asignaturas');
-        const counter = document.getElementById('edit-asignaturas-seleccionadas');
-
-        if (select && counter) {
-            const selectedCount = Array.from(select.selectedOptions).length;
-            counter.textContent = `${selectedCount} asignatura${selectedCount !== 1 ? 's' : ''} seleccionada${selectedCount !== 1 ? 's' : ''}`;
-        }
-    }
-
-    async handleEditEstudiante(e) {
-        e.preventDefault();
-
-        const form = e.target;
-        const estudianteId = document.getElementById('edit-estudiante-id').value;
-
-        const data = {
-            nombre: document.getElementById('edit-nombre-completo').value,
-            email: document.getElementById('edit-correo-electronico').value,
-            grado: document.getElementById('edit-grado').value,
-            grupo: document.getElementById('edit-grupo').value
-        };
-
-        // Validación básica
-        if (!data.nombre || !data.email || !data.grado || !data.grupo) {
-            this.showModalError('edit-estudiante-modal', 'Todos los campos son requeridos.');
-            return;
-        }
-
-        // Validar email
-        if (!CONFIG.validation.emailRegex.test(data.email)) {
-            this.showModalError('edit-estudiante-modal', 'Ingresa un correo electrónico válido.');
-            return;
-        }
-
-        // Mostrar indicador de carga
-        const submitBtn = form.querySelector('.save-btn');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-        submitBtn.disabled = true;
-
-        try {
-            // Enviar datos al servidor
-            const response = await fetch('/actualizar-estudiante', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: estudianteId, ...data })
-            });
-
-            const result = await response.json();
-
-            if (result.status === 'success') {
-                // Mostrar mensaje de éxito
-                this.showModalSuccess('edit-estudiante-modal', 'Estudiante actualizado exitosamente.');
-
-                // Actualizar la tabla de estudiantes
-                if (window.app && window.app.tables && window.app.tables.estudiantes) {
-                    await window.app.tables.estudiantes.loadData();
-                }
-
-                // Cerrar modal después de 2 segundos
-                setTimeout(() => {
-                    this.modals.editEstudiante.close();
-                }, 2000);
-            } else {
-                this.showModalError('edit-estudiante-modal', result.message || 'Error al actualizar el estudiante.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            this.showModalError('edit-estudiante-modal', 'Error al conectar con el servidor.');
-        } finally {
-            // Restaurar botón
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }
-    }
-
-    async handleEditProfesor(e) {
-        e.preventDefault();
-
-        const form = e.target;
-        const profesorId = document.getElementById('edit-profesor-id').value;
-
-        // Obtener asignaturas seleccionadas
-        const asignaturasSelect = document.getElementById('edit-profesor-asignaturas');
-        const asignaturas = Array.from(asignaturasSelect.selectedOptions).map(option => option.value);
-
-        const data = {
-            nombre: document.getElementById('edit-profesor-nombre-completo').value,
-            email: document.getElementById('edit-profesor-correo-electronico').value,
-            telefono: document.getElementById('edit-profesor-telefono').value,
-            asignaturas: asignaturas
-        };
-
-        // Validación básica
-        if (!data.nombre || !data.email || !data.telefono) {
-            this.showModalError('edit-profesor-modal', 'Todos los campos son requeridos.');
-            return;
-        }
-
-        if (asignaturas.length === 0) {
-            this.showModalError('edit-profesor-modal', 'Debe seleccionar al menos una asignatura.');
-            return;
-        }
-
-        // Validar email
-        if (!CONFIG.validation.emailRegex.test(data.email)) {
-            this.showModalError('edit-profesor-modal', 'Ingresa un correo electrónico válido.');
-            return;
-        }
-
-        // Mostrar indicador de carga
-        const submitBtn = form.querySelector('.save-btn');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-        submitBtn.disabled = true;
-
-        try {
-            // Enviar datos al servidor
-            const response = await fetch('/actualizar-profesor', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: profesorId, ...data })
-            });
-
-            const result = await response.json();
-
-            if (result.status === 'success') {
-                // Mostrar mensaje de éxito
-                this.showModalSuccess('edit-profesor-modal', 'Profesor actualizado exitosamente.');
-
-                // Actualizar la tabla de profesores
-                if (window.app && window.app.tables && window.app.tables.profesores) {
-                    await window.app.tables.profesores.loadData();
-                }
-
-                // Cerrar modal después de 2 segundos
-                setTimeout(() => {
-                    this.modals.editProfesor.close();
-                }, 2000);
-            } else {
-                this.showModalError('edit-profesor-modal', result.message || 'Error al actualizar el profesor.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            this.showModalError('edit-profesor-modal', 'Error al conectar con el servidor.');
-        } finally {
-            // Restaurar botón
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }
-    }
-
-    openEditEstudianteModal(estudianteData) {
-        // Llenar el formulario con los datos del estudiante
-        document.getElementById('edit-estudiante-id').value = estudianteData.id;
-        document.getElementById('edit-nombre-completo').value = estudianteData.nombre;
-        document.getElementById('edit-correo-electronico').value = estudianteData.email;
-        document.getElementById('edit-grado').value = estudianteData.grado;
-        document.getElementById('edit-grupo').value = estudianteData.grupo;
-
-        // Limpiar errores previos
-        this.clearModalErrors('edit-estudiante-modal');
-
-        // Abrir modal
-        this.modals.editEstudiante.open();
-    }
-
-    openEditProfesorModal(profesorData) {
-        // Llenar el formulario con los datos del profesor
-        document.getElementById('edit-profesor-id').value = profesorData.id;
-        document.getElementById('edit-profesor-nombre-completo').value = profesorData.nombre;
-        document.getElementById('edit-profesor-correo-electronico').value = profesorData.email;
-        document.getElementById('edit-profesor-telefono').value = profesorData.telefono || '';
-
-        // Establecer asignaturas seleccionadas
-        const asignaturasSelect = document.getElementById('edit-profesor-asignaturas');
-        if (asignaturasSelect && profesorData.asignaturas) {
-            // Limpiar selecciones previas
-            Array.from(asignaturasSelect.options).forEach(option => {
-                option.selected = false;
-            });
-
-            // Seleccionar asignaturas del profesor
-            profesorData.asignaturas.forEach(asignatura => {
-                const option = Array.from(asignaturasSelect.options).find(opt => opt.value === asignatura.toLowerCase());
-                if (option) {
-                    option.selected = true;
-                }
-            });
-        }
-
-        // Actualizar contador
-        this.updateEditAsignaturasCount();
-
-        // Limpiar errores previos
-        this.clearModalErrors('edit-profesor-modal');
-
-        // Abrir modal
-        this.modals.editProfesor.open();
-    }
-
-    clearModalErrors(modalId) {
-        const modal = document.getElementById(modalId);
-        if (!modal) return;
-
-        // Limpiar clases de error de inputs
-        modal.querySelectorAll('.form-input, .form-select').forEach(input => {
-            input.classList.remove('error', 'success');
-        });
-
-        // Limpiar mensajes de error
-        modal.querySelectorAll('.error-message').forEach(error => {
-            error.classList.remove('show');
-            error.textContent = '';
-        });
-    }
-
-    // No olvides llamar a setupEditModals en el init de UIManager:
-    // Dentro del método init() de UIManager, agrega:
-    // this.setupEditModals();
 
     setupModalInteractions() {
         // Editar perfil

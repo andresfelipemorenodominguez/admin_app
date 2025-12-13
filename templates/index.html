@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoja de Vida - Jesus Aragon (Estudiante)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="../static/css/stile.css"> 
+</head>
+<body>
+
+    <header class="header-cv mb-4">
+        <div class="container">
+            <img src="../static/img/foto.jpg" alt="Foto de Jesus Aragon" class="profile-pic mb-3">
+            
+            <h1 class="display-5">Jesus Didier Aragon Velasco</h1>
+            <p class="lead">Estudiante de Tecnico de programacion Software</p>
+            <p class="lead">SENA</p>
+            <p>
+                <i class="fas fa-envelope me-2"></i> aragondidier19@gmail.com
+                <span class="mx-2">|</span> 
+                <i class="fas fa-phone me-2"></i> +57 3174899357
+                <span class="mx-2">|</span> 
+                <a href="https://github.com/{{ github_user }}" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none" aria-label="GitHub de {{ github_user }}">
+                    <i class="fab fa-github me-2"></i> https://github.com/{{ github_user }}
+                </a>
+            </p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            
+            <div class="col-12">
+                <h2 class="section-title"><i class="fas fa-user-graduate me-3"></i>Educación y Certificaciones</h2>
+                
+                <div class="card mb-4 card-diploma shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title">Programador (orientado a objetos)</h4>
+                        <h6 class="card-subtitle mb-2 text-muted">Capacítate para el Empleo - Fundación Carlos Slim</h6>
+                        <p class="card-text">
+                            Fecha de Emisión: 19 Sept. 2025 <br>
+                            Logros/Detalles: Avance del 100%, puntaje de 8.62, equivalente a 82 horas.
+                            <br>
+                            <button type="button" class="btn btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#certModal1" aria-label="Ver certificado 1">
+                                <i class="fas fa-external-link-alt me-1"></i> Ver Certificado
+                            </button>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Modal 1 -->
+                <div class="modal fade" id="certModal1" tabindex="-1" aria-labelledby="certModalLabel1" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="certModalLabel1">Certificado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                      </div>
+                      <div class="modal-body text-center">
+                        <img src="../static/img/certificado.jpg" alt="certificado 1" class="img-fluid modal-img">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card mb-4 card-diploma shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title">Fundamentos de estructura de datos</h4>
+                        <h6 class="card-subtitle mb-2 text-muted">Capacítate para el Empleo - Fundación Carlos Slim</h6>
+                        <p class="card-text">
+                            Fecha de Emisión: 30 octu. 2025 <br>
+                            Logros/Detalles: Avance del 100%, puntaje de 8.57, equivalente a 40 horas.
+                            <br>
+                            <button type="button" class="btn btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#certModal2" aria-label="Ver certificado 2">
+                                <i class="fas fa-external-link-alt me-1"></i> Ver Certificado
+                            </button>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Modal 2 -->
+                <div class="modal fade" id="certModal2" tabindex="-1" aria-labelledby="certModalLabel2" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="certModalLabel2">Certificado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                      </div>
+                      <div class="modal-body text-center">
+                        <img src="../static/img/certificado2.jpg" alt="certificado 2" class="img-fluid modal-img">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <br>
+                <div class="card mb-4 card-diploma shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title">Estudios Bachillerato</h4>
+                        <h6 class="card-subtitle mb-2 text-muted">Institucion Educativa Mercedes Abrego</h6>
+                        <p class="card-text">
+                            Período: 2015 - (actualidad)  <br>
+                            Estado: En curso
+
+                        </p>
+                    </div>
+                </div>
+
+
+                <h2 class="section-title mt-5"><i class="fas fa-lightbulb me-3"></i>Habilidades e Intereses</h2>
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Habilidades Técnicas</h5>
+                        <div class="d-flex flex-wrap mb-3">
+                            <span class="badge bg-primary me-2 mb-2">HTML</span>
+                            <span class="badge bg-info text-dark me-2 mb-2">CSS</span>
+                            <span class="badge bg-warning text-dark me-2 mb-2">PYTHON</span>
+                            <span class="badge bg-success me-2 mb-2">SQL</span>
+                        </div>
+                        <h5 class="card-title mt-4">Habilidades Blandas</h5>
+                        <div class="d-flex flex-wrap">
+                            <span class="badge bg-dark me-2 mb-2">Trabajo en Equipo</span>
+                            <span class="badge bg-dark me-2 mb-2">Resolución de Problemas</span>
+                            <span class="badge bg-dark me-2 mb-2">Comunicación</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title mt-5"><i class="fas fa-project-diagram me-3"></i>Proyecto</h2>
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Plataforma de notas (Educación Digital)</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">un proyecto que combina python, html, css, sql para crear una gran pagina de Plataforma de notas</h6>
+                        <p class="card-text">
+                            Descripción: Desarrollo de una plataforma web para la gestión de notas académicas, permitiendo a estudiantes y profesores interactuar de manera eficiente.
+                            <br>
+                            <a href="https://github.com/DidierAragon/Taller-de-investigaci-n" target="_blank" rel="noopener noreferrer" class="card-link mt-2 d-inline-block">
+    Ver Proyecto <i class="fas fa-external-link-alt"></i>
+</a>
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

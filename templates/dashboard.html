@@ -828,6 +828,324 @@
         </div>
     </div>
 
+    <!-- Modal para editar estudiante -->
+    <div class="modal-overlay" id="edit-estudiante-modal">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-edit"></i> Editar Estudiante
+                </h2>
+                <button class="modal-close-btn" id="close-edit-estudiante-modal" aria-label="Cerrar modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-content">
+                <form id="edit-estudiante-form" class="edit-modal-form">
+                    <!-- Sección de Información Personal -->
+                    <div class="modal-form-section">
+                        <h3 class="modal-form-section-title">
+                            <i class="fas fa-user-circle"></i> Información Personal
+                        </h3>
+                        
+                        <div class="modal-form-group">
+                            <label for="edit-nombre-completo" class="modal-form-label">
+                                Nombre completo <span class="required">*</span>
+                            </label>
+                            <div class="modal-input-with-icon">
+                                <i class="fas fa-user input-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="edit-nombre-completo" 
+                                    class="modal-form-input" 
+                                    placeholder="Ej: María González López"
+                                    required
+                                >
+                            </div>
+                            <div class="modal-error-message" id="edit-nombre-error"></div>
+                        </div>
+
+                        <div class="modal-form-row">
+                            <div class="modal-form-group">
+                                <label for="edit-tipo-documento" class="modal-form-label">
+                                    Tipo de documento <span class="required">*</span>
+                                </label>
+                                <div class="modal-select-wrapper">
+                                    <i class="fas fa-id-card select-icon"></i>
+                                    <select id="edit-tipo-documento" class="modal-form-select" required>
+                                        <option value="" disabled selected>Selecciona un tipo</option>
+                                        <option value="cedula">Cédula</option>
+                                        <option value="tarjeta-identidad">Tarjeta de identidad</option>
+                                        <option value="pasaporte">Pasaporte</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-form-group">
+                                <label for="edit-numero-documento" class="modal-form-label">
+                                    Número de documento <span class="required">*</span>
+                                </label>
+                                <div class="modal-input-with-icon">
+                                    <i class="fas fa-hashtag input-icon"></i>
+                                    <input 
+                                        type="text" 
+                                        id="edit-numero-documento" 
+                                        class="modal-form-input" 
+                                        placeholder="Ej: 123456789"
+                                        required
+                                    >
+                                </div>
+                                <div class="modal-error-message" id="edit-documento-error"></div>
+                            </div>
+                        </div>
+
+                        <div class="modal-form-group">
+                            <label for="edit-correo-electronico" class="modal-form-label">
+                                Correo electrónico <span class="required">*</span>
+                            </label>
+                            <div class="modal-input-with-icon">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input 
+                                    type="email" 
+                                    id="edit-correo-electronico" 
+                                    class="modal-form-input" 
+                                    placeholder="Ej: estudiante@ejemplo.com"
+                                    required
+                                >
+                            </div>
+                            <div class="modal-error-message" id="edit-correo-error"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Información Académica -->
+                    <div class="modal-form-section">
+                        <h3 class="modal-form-section-title">
+                            <i class="fas fa-graduation-cap"></i> Información Académica
+                        </h3>
+                        
+                        <div class="modal-form-row">
+                            <div class="modal-form-group">
+                                <label for="edit-grado" class="modal-form-label">
+                                    Grado <span class="required">*</span>
+                                </label>
+                                <div class="modal-select-wrapper">
+                                    <i class="fas fa-sort-numeric-up select-icon"></i>
+                                    <select id="edit-grado" class="modal-form-select" required>
+                                        <option value="" disabled selected>Selecciona un grado</option>
+                                        <option value="1">1° Primaria</option>
+                                        <option value="2">2° Primaria</option>
+                                        <option value="3">3° Primaria</option>
+                                        <option value="4">4° Primaria</option>
+                                        <option value="5">5° Primaria</option>
+                                        <option value="6">6° Primaria</option>
+                                        <option value="7">7° Secundaria</option>
+                                        <option value="8">8° Secundaria</option>
+                                        <option value="9">9° Secundaria</option>
+                                        <option value="10">10° Secundaria</option>
+                                        <option value="11">11° Secundaria</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-form-group">
+                                <label for="edit-grupo" class="modal-form-label">
+                                    Grupo/Sección <span class="required">*</span>
+                                </label>
+                                <div class="modal-select-wrapper">
+                                    <i class="fas fa-users select-icon"></i>
+                                    <select id="edit-grupo" class="modal-form-select" required>
+                                        <option value="" disabled selected>Selecciona un grupo</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ID oculto para referencia -->
+                    <input type="hidden" id="edit-estudiante-id">
+
+                    <div class="modal-form-actions">
+                        <button type="button" class="btn-secondary cancel-btn" id="cancel-edit-estudiante">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary save-btn">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar profesor -->
+    <div class="modal-overlay" id="edit-profesor-modal">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-edit"></i> Editar Profesor
+                </h2>
+                <button class="modal-close-btn" id="close-edit-profesor-modal" aria-label="Cerrar modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-content">
+                <form id="edit-profesor-form" class="edit-modal-form">
+                    <!-- Sección de Información Personal -->
+                    <div class="modal-form-section">
+                        <h3 class="modal-form-section-title">
+                            <i class="fas fa-user-circle"></i> Información Personal
+                        </h3>
+                        
+                        <div class="modal-form-group">
+                            <label for="edit-profesor-nombre-completo" class="modal-form-label">
+                                Nombre completo <span class="required">*</span>
+                            </label>
+                            <div class="modal-input-with-icon">
+                                <i class="fas fa-user input-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="edit-profesor-nombre-completo" 
+                                    class="modal-form-input" 
+                                    placeholder="Ej: Carlos Rodríguez Martínez"
+                                    required
+                                >
+                            </div>
+                            <div class="modal-error-message" id="edit-profesor-nombre-error"></div>
+                        </div>
+
+                        <div class="modal-form-row">
+                            <div class="modal-form-group">
+                                <label for="edit-profesor-tipo-documento" class="modal-form-label">
+                                    Tipo de documento <span class="required">*</span>
+                                </label>
+                                <div class="modal-select-wrapper">
+                                    <i class="fas fa-id-card select-icon"></i>
+                                    <select id="edit-profesor-tipo-documento" class="modal-form-select" required>
+                                        <option value="" disabled selected>Selecciona un tipo</option>
+                                        <option value="cc">Cédula de Ciudadanía (CC)</option>
+                                        <option value="ti">Tarjeta de Identidad (TI)</option>
+                                        <option value="ce">Cédula de Extranjería (CE)</option>
+                                        <option value="pasaporte">Pasaporte</option>
+                                        <option value="nit">NIT</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-form-group">
+                                <label for="edit-profesor-numero-documento" class="modal-form-label">
+                                    Número de documento <span class="required">*</span>
+                                </label>
+                                <div class="modal-input-with-icon">
+                                    <i class="fas fa-hashtag input-icon"></i>
+                                    <input 
+                                        type="text" 
+                                        id="edit-profesor-numero-documento" 
+                                        class="modal-form-input" 
+                                        placeholder="Ej: 123456789"
+                                        required
+                                    >
+                                </div>
+                                <div class="modal-error-message" id="edit-profesor-documento-error"></div>
+                            </div>
+                        </div>
+
+                        <div class="modal-form-group">
+                            <label for="edit-profesor-correo-electronico" class="modal-form-label">
+                                Correo electrónico institucional <span class="required">*</span>
+                            </label>
+                            <div class="modal-input-with-icon">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input 
+                                    type="email" 
+                                    id="edit-profesor-correo-electronico" 
+                                    class="modal-form-input" 
+                                    placeholder="Ej: profesor@institucion.edu.co"
+                                    required
+                                >
+                            </div>
+                            <div class="modal-error-message" id="edit-profesor-correo-error"></div>
+                        </div>
+
+                        <div class="modal-form-group">
+                            <label for="edit-profesor-telefono" class="modal-form-label">
+                                Número de teléfono <span class="required">*</span>
+                            </label>
+                            <div class="modal-input-with-icon">
+                                <i class="fas fa-phone input-icon"></i>
+                                <input 
+                                    type="tel" 
+                                    id="edit-profesor-telefono" 
+                                    class="modal-form-input" 
+                                    placeholder="Ej: 3101234567"
+                                    required
+                                >
+                            </div>
+                            <div class="modal-error-message" id="edit-profesor-telefono-error"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Información Académica -->
+                    <div class="modal-form-section">
+                        <h3 class="modal-form-section-title">
+                            <i class="fas fa-graduation-cap"></i> Información Académica
+                        </h3>
+                        
+                        <div class="modal-form-group">
+                            <label for="edit-profesor-asignaturas" class="modal-form-label">
+                                Asignatura(s) que enseña <span class="required">*</span>
+                            </label>
+                            <div class="modal-select-wrapper multi-select-wrapper">
+                                <i class="fas fa-book select-icon"></i>
+                                <select id="edit-profesor-asignaturas" class="modal-form-select" multiple required>
+                                    <option value="matematicas">Matemáticas</option>
+                                    <option value="español">Español</option>
+                                    <option value="ciencias-naturales">Ciencias Naturales</option>
+                                    <option value="ciencias-sociales">Ciencias Sociales</option>
+                                    <option value="ingles">Inglés</option>
+                                    <option value="educacion-fisica">Educación Física</option>
+                                    <option value="arte">Arte</option>
+                                    <option value="musica">Música</option>
+                                    <option value="tecnologia">Tecnología</option>
+                                    <option value="etica">Ética y Valores</option>
+                                    <option value="religion">Religión</option>
+                                    <option value="fisica">Física</option>
+                                    <option value="quimica">Química</option>
+                                    <option value="biologia">Biología</option>
+                                    <option value="filosofia">Filosofía</option>
+                                    <option value="economia">Economía</option>
+                                    <option value="informatica">Informática</option>
+                                </select>
+                                <div class="modal-multi-select-info">
+                                    <span id="edit-asignaturas-seleccionadas">0 asignaturas seleccionadas</span>
+                                    <small>(Mantén presionada la tecla Ctrl para seleccionar múltiples opciones)</small>
+                                </div>
+                            </div>
+                            <div class="modal-error-message" id="edit-profesor-asignaturas-error"></div>
+                        </div>
+                    </div>
+
+                    <!-- ID oculto para referencia -->
+                    <input type="hidden" id="edit-profesor-id">
+
+                    <div class="modal-form-actions">
+                        <button type="button" class="btn-secondary cancel-btn" id="cancel-edit-profesor">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary save-btn">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='script/dashboard.js') }}"></script>
 </body>
 </html>

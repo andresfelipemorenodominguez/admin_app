@@ -2170,7 +2170,506 @@ class StatsManager {
 }
 
 // ============================================
-// INICIALIZACIÓN DE LA APLICACIÓN (MODIFICADA)
+// GESTOR DE EDICIÓN DE ESTUDIANTES Y PROFESORES
+// ============================================
+
+class EditManager {
+    constructor() {
+        this.modals = {};
+        this.init();
+    }
+
+    init() {
+        this.setupModals();
+        this.setupEventListeners();
+    }
+
+    setupModals() {
+        // Modal de editar estudiante
+        this.modals.estudiante = new ModalManager('edit-estudiante-modal', {
+            closeBtnId: 'close-edit-estudiante-modal'
+        });
+
+        // Modal de editar profesor
+        this.modals.profesor = new ModalManager('edit-profesor-modal', {
+            closeBtnId: 'close-edit-profesor-modal'
+        });
+
+        // Configurar botones cancelar
+        document.getElementById('cancel-edit-estudiante')?.addEventListener('click', 
+            () => this.modals.estudiante.close());
+        
+        document.getElementById('cancel-edit-profesor')?.addEventListener('click', 
+            () => this.modals.profesor.close());
+    }
+
+    setupEventListeners() {
+        // Listener para botones de editar en la tabla de estudiantes
+        document.addEventListener('click', async (e) => {
+            const editBtn = e.target.closest('.action-btn.edit');
+            if (!editBtn) return;
+
+            const row = editBtn.closest('tr');
+            const codigo = row.dataset.codigo;
+            
+            if (!codigo) return;
+
+            // Determinar si es estudiante o profesor
+            if (row.closest('#tabla-estudiantes')) {
+                await this.loadEstudianteData(codigo);
+                this.modals.estudiante.open();
+            } else if (row.closest('#tabla-profesores')) {
+                await this.loadProfesorData(codigo);
+                this.modals.profesor.open();
+            }
+        });
+
+        // Formulario de editar estudiante
+        const editEstudianteForm = document.getElementById('edit-estudiante-form');
+        if (editEstudianteForm) {
+            editEstudianteForm.addEventListener('submit', (e) => this.handleEditEstudiante(e));
+        }
+
+        // Formulario de editar profesor
+        const editProfesorForm = document.getElementById('edit-profesor-form');
+        if (editProfesorForm) {
+            editProfesorForm.addEventListener('submit', (e) => this.handleEditProfesor(e));
+        }
+
+        // Actualizar contador de asignaturas en tiempo real
+        const asignaturasSelect = document.getElementById('edit-profesor-asignaturas');
+        if (asignaturasSelect) {
+            asignaturasSelect.addEventListener('change', () => {
+                this.updateAsignaturasCount();
+            });
+        }
+    }
+
+    async loadEstudianteData(codigo) {
+        try {
+            const response = await fetch(`/obtener-estudiante/${codigo}`);
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                const estudiante = result.data;
+                
+                // Llenar formulario con los datos
+                document.getElementById('edit-estudiante-id').value = estudiante.id;
+                document.getElementById('edit-nombre-completo').value = estudiante.nombre;
+                document.getElementById('edit-tipo-documento').value = estudiante.tipo_documento;
+                document.getElementById('edit-numero-documento').value = estudiante.numero_documento;
+                document.getElementById('edit-correo-electronico').value = estudiante.email;
+                document.getElementById('edit-grado').value = estudiante.grado;
+                document.getElementById('edit-grupo').value = estudiante.grupo;
+
+                // Limpiar errores
+                this.clearFormErrors('edit-estudiante-form');
+            } else {
+                this.showMessage('Error al cargar datos del estudiante', 'error');
+            }
+        } catch (error) {
+            console.error('Error cargando datos del estudiante:', error);
+            this.showMessage('Error de conexión', 'error');
+        }
+    }
+
+    async loadProfesorData(codigo) {
+        try {
+            const response = await fetch(`/obtener-profesor/${codigo}`);
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                const profesor = result.data;
+                
+                // Llenar formulario con los datos
+                document.getElementById('edit-profesor-id').value = profesor.id;
+                document.getElementById('edit-profesor-nombre-completo').value = profesor.nombre;
+                document.getElementById('edit-profesor-tipo-documento').value = profesor.tipo_documento;
+                document.getElementById('edit-profesor-numero-documento').value = profesor.numero_documento;
+                document.getElementById('edit-profesor-correo-electronico').value = profesor.email;
+                document.getElementById('edit-profesor-telefono').value = profesor.telefono;
+
+                // Seleccionar asignaturas
+                const asignaturasSelect = document.getElementById('edit-profesor-asignaturas');
+                if (asignaturasSelect && profesor.asignaturas) {
+                    Array.from(asignaturasSelect.options).forEach(option => {
+                        option.selected = profesor.asignaturas.includes(option.value);
+                    });
+                    this.updateAsignaturasCount();
+                }
+
+                // Limpiar errores
+                this.clearFormErrors('edit-profesor-form');
+            } else {
+                this.showMessage('Error al cargar datos del profesor', 'error');
+            }
+        } catch (error) {
+            console.error('Error cargando datos del profesor:', error);
+            this.showMessage('Error de conexión', 'error');
+        }
+    }
+
+    updateAsignaturasCount() {
+        const select = document.getElementById('edit-profesor-asignaturas');
+        const counter = document.getElementById('edit-asignaturas-seleccionadas');
+
+        if (select && counter) {
+            const selectedCount = Array.from(select.selectedOptions).length;
+            counter.textContent = `${selectedCount} asignatura${selectedCount !== 1 ? 's' : ''} seleccionada${selectedCount !== 1 ? 's' : ''}`;
+        }
+    }
+
+    async handleEditEstudiante(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const estudianteId = document.getElementById('edit-estudiante-id').value;
+
+        // Validar formulario
+        if (!this.validateEstudianteForm()) {
+            return;
+        }
+
+        // Preparar datos
+        const estudianteData = {
+            id: estudianteId,
+            nombre_completo: document.getElementById('edit-nombre-completo').value,
+            tipo_documento: document.getElementById('edit-tipo-documento').value,
+            numero_documento: document.getElementById('edit-numero-documento').value,
+            correo_electronico: document.getElementById('edit-correo-electronico').value,
+            grado: document.getElementById('edit-grado').value,
+            grupo: document.getElementById('edit-grupo').value
+        };
+
+        // Mostrar indicador de carga
+        const submitBtn = form.querySelector('.save-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        submitBtn.disabled = true;
+
+        try {
+            // Enviar datos al servidor
+            const response = await fetch('/actualizar-estudiante', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(estudianteData)
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                this.showMessage('Estudiante actualizado exitosamente', 'success');
+                this.modals.estudiante.close();
+                
+                // Actualizar la tabla de estudiantes
+                if (window.app && window.app.tables && window.app.tables.estudiantes) {
+                    await window.app.tables.estudiantes.loadData();
+                }
+
+                // Actualizar estadísticas
+                if (window.app && window.app.stats) {
+                    await window.app.stats.refresh();
+                }
+            } else {
+                this.showMessage(result.message || 'Error al actualizar el estudiante', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            this.showMessage('Error de conexión', 'error');
+        } finally {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    async handleEditProfesor(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const profesorId = document.getElementById('edit-profesor-id').value;
+
+        // Validar formulario
+        if (!this.validateProfesorForm()) {
+            return;
+        }
+
+        // Obtener asignaturas seleccionadas
+        const asignaturasSelect = document.getElementById('edit-profesor-asignaturas');
+        const asignaturas = Array.from(asignaturasSelect.selectedOptions).map(option => option.value);
+
+        // Preparar datos
+        const profesorData = {
+            id: profesorId,
+            nombre_completo: document.getElementById('edit-profesor-nombre-completo').value,
+            tipo_documento: document.getElementById('edit-profesor-tipo-documento').value,
+            numero_documento: document.getElementById('edit-profesor-numero-documento').value,
+            correo_electronico: document.getElementById('edit-profesor-correo-electronico').value,
+            telefono: document.getElementById('edit-profesor-telefono').value,
+            asignaturas: asignaturas
+        };
+
+        // Mostrar indicador de carga
+        const submitBtn = form.querySelector('.save-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        submitBtn.disabled = true;
+
+        try {
+            // Enviar datos al servidor
+            const response = await fetch('/actualizar-profesor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(profesorData)
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                this.showMessage('Profesor actualizado exitosamente', 'success');
+                this.modals.profesor.close();
+                
+                // Actualizar la tabla de profesores
+                if (window.app && window.app.tables && window.app.tables.profesores) {
+                    await window.app.tables.profesores.loadData();
+                }
+
+                // Actualizar estadísticas
+                if (window.app && window.app.stats) {
+                    await window.app.stats.refresh();
+                }
+            } else {
+                this.showMessage(result.message || 'Error al actualizar el profesor', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            this.showMessage('Error de conexión', 'error');
+        } finally {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    validateEstudianteForm() {
+        let isValid = true;
+
+        // Validar nombre
+        const nombre = document.getElementById('edit-nombre-completo').value.trim();
+        if (!nombre || nombre.length < 5) {
+            this.showFieldError('edit-nombre-completo', 'El nombre debe tener al menos 5 caracteres');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-nombre-completo');
+        }
+
+        // Validar tipo de documento
+        const tipoDocumento = document.getElementById('edit-tipo-documento').value;
+        if (!tipoDocumento) {
+            this.showFieldError('edit-tipo-documento', 'Selecciona un tipo de documento');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-tipo-documento');
+        }
+
+        // Validar número de documento
+        const numeroDocumento = document.getElementById('edit-numero-documento').value.trim();
+        if (!numeroDocumento) {
+            this.showFieldError('edit-numero-documento', 'El número de documento es obligatorio');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-numero-documento');
+        }
+
+        // Validar correo
+        const correo = document.getElementById('edit-correo-electronico').value.trim();
+        if (!correo || !CONFIG.validation.emailRegex.test(correo)) {
+            this.showFieldError('edit-correo-electronico', 'Ingresa un correo electrónico válido');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-correo-electronico');
+        }
+
+        // Validar grado
+        const grado = document.getElementById('edit-grado').value;
+        if (!grado) {
+            this.showFieldError('edit-grado', 'Selecciona un grado');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-grado');
+        }
+
+        // Validar grupo
+        const grupo = document.getElementById('edit-grupo').value;
+        if (!grupo) {
+            this.showFieldError('edit-grupo', 'Selecciona un grupo');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-grupo');
+        }
+
+        return isValid;
+    }
+
+    validateProfesorForm() {
+        let isValid = true;
+
+        // Validar nombre
+        const nombre = document.getElementById('edit-profesor-nombre-completo').value.trim();
+        if (!nombre || nombre.length < 5) {
+            this.showFieldError('edit-profesor-nombre-completo', 'El nombre debe tener al menos 5 caracteres');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-profesor-nombre-completo');
+        }
+
+        // Validar tipo de documento
+        const tipoDocumento = document.getElementById('edit-profesor-tipo-documento').value;
+        if (!tipoDocumento) {
+            this.showFieldError('edit-profesor-tipo-documento', 'Selecciona un tipo de documento');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-profesor-tipo-documento');
+        }
+
+        // Validar número de documento
+        const numeroDocumento = document.getElementById('edit-profesor-numero-documento').value.trim();
+        if (!numeroDocumento) {
+            this.showFieldError('edit-profesor-numero-documento', 'El número de documento es obligatorio');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-profesor-numero-documento');
+        }
+
+        // Validar correo
+        const correo = document.getElementById('edit-profesor-correo-electronico').value.trim();
+        if (!correo || !CONFIG.validation.emailRegex.test(correo)) {
+            this.showFieldError('edit-profesor-correo-electronico', 'Ingresa un correo electrónico válido');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-profesor-correo-electronico');
+        }
+
+        // Validar teléfono
+        const telefono = document.getElementById('edit-profesor-telefono').value.trim();
+        if (!telefono || telefono.length < 7) {
+            this.showFieldError('edit-profesor-telefono', 'El teléfono debe tener al menos 7 dígitos');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-profesor-telefono');
+        }
+
+        // Validar asignaturas
+        const asignaturasSelect = document.getElementById('edit-profesor-asignaturas');
+        const selectedAsignaturas = Array.from(asignaturasSelect.selectedOptions);
+        if (selectedAsignaturas.length === 0) {
+            this.showFieldError('edit-profesor-asignaturas', 'Selecciona al menos una asignatura');
+            isValid = false;
+        } else {
+            this.clearFieldError('edit-profesor-asignaturas');
+        }
+
+        return isValid;
+    }
+
+    showFieldError(fieldId, message) {
+        const errorElement = document.getElementById(`${fieldId}-error`);
+        const inputElement = document.getElementById(fieldId);
+
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        if (inputElement) {
+            inputElement.classList.remove('success');
+            inputElement.classList.add('error');
+        }
+    }
+
+    clearFieldError(fieldId) {
+        const errorElement = document.getElementById(`${fieldId}-error`);
+        const inputElement = document.getElementById(fieldId);
+
+        if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.classList.remove('show');
+        }
+
+        if (inputElement) {
+            inputElement.classList.remove('error');
+        }
+    }
+
+    clearFormErrors(formId) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+
+        form.querySelectorAll('.modal-error-message').forEach(error => {
+            error.textContent = '';
+            error.classList.remove('show');
+        });
+
+        form.querySelectorAll('.modal-form-input, .modal-form-select').forEach(input => {
+            input.classList.remove('error', 'success');
+        });
+    }
+
+    showMessage(message, type) {
+        // Crear o reutilizar contenedor de mensajes
+        let messageContainer = document.getElementById('edit-message-container');
+        if (!messageContainer) {
+            messageContainer = document.createElement('div');
+            messageContainer.id = 'edit-message-container';
+            messageContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                max-width: 300px;
+            `;
+            document.body.appendChild(messageContainer);
+        }
+
+        const messageElement = document.createElement('div');
+        messageElement.className = `edit-message ${type}`;
+        messageElement.innerHTML = `
+            <div style="
+                padding: 12px 16px;
+                border-radius: 6px;
+                margin-bottom: 10px;
+                background: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+                color: ${type === 'success' ? '#155724' : '#721c24'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'};
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            ">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+
+        messageContainer.appendChild(messageElement);
+
+        // Eliminar mensaje después de 5 segundos
+        setTimeout(() => {
+            messageElement.style.opacity = '0';
+            messageElement.style.transition = 'opacity 0.3s';
+            setTimeout(() => {
+                messageElement.remove();
+            }, 300);
+        }, 5000);
+    }
+}
+
+// ============================================
+// INICIALIZACIÓN ACTUALIZADA
 // ============================================
 
 class App {
@@ -2180,6 +2679,7 @@ class App {
         this.forms = {};
         this.tables = {};
         this.stats = null;
+        this.editManager = null; // Nuevo gestor de edición
     }
 
     init() {
@@ -2195,8 +2695,11 @@ class App {
             this.forms.student = new StudentFormHandler();
             this.forms.professor = new ProfessorFormHandler();
 
-            // Inicializar tablas (solo si estamos en la sección de reportes o la navegamos)
+            // Inicializar tablas
             this.initializeTables();
+
+            // Inicializar gestor de edición
+            this.editManager = new EditManager();
 
             console.log('Aplicación inicializada correctamente');
             console.log('Componentes cargados:', {
@@ -2204,7 +2707,8 @@ class App {
                 navigation: !!this.navigation,
                 stats: !!this.stats,
                 forms: Object.keys(this.forms),
-                tables: Object.keys(this.tables)
+                tables: Object.keys(this.tables),
+                editManager: !!this.editManager
             });
 
         } catch (error) {
@@ -2213,7 +2717,6 @@ class App {
     }
 
     initializeTables() {
-        // Inicializar tablas de reportes
         this.tables.estudiantes = new EstudiantesTableManager();
         this.tables.profesores = new ProfesoresTableManager();
     }

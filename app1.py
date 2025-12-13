@@ -175,6 +175,22 @@ def logout():
     session.pop('user_info', None)
     return redirect(url_for('loginuser'))
 
+@app.route('/estevan')
+def estevan():
+    return render_template('estevan.html')
+
+@app.route('/jesus')
+def jesus():
+    return render_template('jesus.html')
+
+@app.route('/manuel')
+def manuel():
+    return render_template('manuel.html')
+
+@app.route('/moreno')
+def moreno():
+    return render_template('moreno.html')
+
 @app.route('/solicitud_user')
 def solicitud_user():
     conn = get_db_connection()

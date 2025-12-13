@@ -1818,107 +1818,23 @@ class UIManager {
             editProfesorForm.addEventListener('submit', (e) => this.handleEditProfesor(e));
         }
 
-        // Configurar botones para generar contraseñas
-        this.setupEditPasswordGenerators();
-        
-        // Configurar toggles para mostrar/ocultar contraseñas
-        this.setupEditPasswordToggles();
-        
-        // Configurar validación en tiempo real
-        this.setupEditPasswordValidation();
-    }
-
-    setupEditPasswordGenerators() {
-        // Generar contraseña para estudiante
-        const generateEstudianteBtn = document.getElementById('generate-edit-estudiante-password-btn');
-        if (generateEstudianteBtn) {
-            generateEstudianteBtn.addEventListener('click', () => {
-                const password = Utils.generatePassword();
-                document.getElementById('edit-estudiante-contrasena').value = password;
-                document.getElementById('edit-estudiante-confirmar-contrasena').value = password;
-                this.updatePasswordStrength(
-                    'edit-estudiante-contrasena', 
-                    'edit-estudiante-password-strength-fill', 
-                    'edit-estudiante-password-strength-label'
-                );
-            });
-        }
-
-        // Generar contraseña para profesor
-        const generateProfesorBtn = document.getElementById('generate-edit-profesor-password-btn');
-        if (generateProfesorBtn) {
-            generateProfesorBtn.addEventListener('click', () => {
-                const password = Utils.generatePassword();
-                document.getElementById('edit-profesor-contrasena').value = password;
-                document.getElementById('edit-profesor-confirmar-contrasena').value = password;
-                this.updatePasswordStrength(
-                    'edit-profesor-contrasena', 
-                    'edit-profesor-password-strength-fill', 
-                    'edit-profesor-password-strength-label'
-                );
+        // Actualizar contador de asignaturas en tiempo real
+        const editAsignaturasSelect = document.getElementById('edit-profesor-asignaturas');
+        if (editAsignaturasSelect) {
+            editAsignaturasSelect.addEventListener('change', () => {
+                this.updateEditAsignaturasCount();
             });
         }
     }
 
-    setupEditPasswordToggles() {
-        // Toggle para contraseña de estudiante
-        this.setupPasswordToggle('edit-estudiante-contrasena', 'toggle-edit-estudiante-password');
-        this.setupPasswordToggle('edit-estudiante-confirmar-contrasena', 'toggle-edit-estudiante-confirm-password');
-        
-        // Toggle para contraseña de profesor
-        this.setupPasswordToggle('edit-profesor-contrasena', 'toggle-edit-profesor-password');
-        this.setupPasswordToggle('edit-profesor-confirmar-contrasena', 'toggle-edit-profesor-confirm-password');
-    }
+    updateEditAsignaturasCount() {
+        const select = document.getElementById('edit-profesor-asignaturas');
+        const counter = document.getElementById('edit-asignaturas-seleccionadas');
 
-    setupEditPasswordValidation() {
-        // Validación en tiempo real para contraseña de estudiante
-        const estudiantePasswordInput = document.getElementById('edit-estudiante-contrasena');
-        if (estudiantePasswordInput) {
-            estudiantePasswordInput.addEventListener('input', () => {
-                this.updatePasswordStrength(
-                    'edit-estudiante-contrasena', 
-                    'edit-estudiante-password-strength-fill', 
-                    'edit-estudiante-password-strength-label'
-                );
-            });
+        if (select && counter) {
+            const selectedCount = Array.from(select.selectedOptions).length;
+            counter.textContent = `${selectedCount} asignatura${selectedCount !== 1 ? 's' : ''} seleccionada${selectedCount !== 1 ? 's' : ''}`;
         }
-
-        // Validación en tiempo real para contraseña de profesor
-        const profesorPasswordInput = document.getElementById('edit-profesor-contrasena');
-        if (profesorPasswordInput) {
-            profesorPasswordInput.addEventListener('input', () => {
-                this.updatePasswordStrength(
-                    'edit-profesor-contrasena', 
-                    'edit-profesor-password-strength-fill', 
-                    'edit-profesor-password-strength-label'
-                );
-            });
-        }
-    }
-
-    updatePasswordStrength(passwordInputId, strengthFillId, strengthLabelId) {
-        const passwordInput = document.getElementById(passwordInputId);
-        const strengthFill = document.getElementById(strengthFillId);
-        const strengthLabel = document.getElementById(strengthLabelId);
-
-        if (!passwordInput || !strengthFill || !strengthLabel) return;
-
-        const password = passwordInput.value;
-        const strength = Validator.calculatePasswordStrength(password);
-
-        strengthFill.style.width = `${strength.percentage}%`;
-        strengthFill.style.backgroundColor = strength.color;
-        strengthLabel.textContent = this.getStrengthText(strength.level);
-        strengthLabel.style.color = strength.color;
-    }
-
-    getStrengthText(level) {
-        const texts = {
-            weak: 'Débil',
-            medium: 'Moderada',
-            strong: 'Fuerte'
-        };
-        return texts[level] || 'Débil';
     }
 
     async handleEditEstudiante(e) {
@@ -1944,26 +1860,6 @@ class UIManager {
         if (!CONFIG.validation.emailRegex.test(data.email)) {
             this.showModalError('edit-estudiante-modal', 'Ingresa un correo electrónico válido.');
             return;
-        }
-
-        // Obtener contraseñas si se han llenado
-        const nuevaContrasena = document.getElementById('edit-estudiante-contrasena').value;
-        const confirmarContrasena = document.getElementById('edit-estudiante-confirmar-contrasena').value;
-
-        // Validar contraseñas si se han ingresado
-        if (nuevaContrasena || confirmarContrasena) {
-            if (nuevaContrasena.length < 8) {
-                this.showModalError('edit-estudiante-modal', 'La nueva contraseña debe tener al menos 8 caracteres.');
-                return;
-            }
-
-            if (nuevaContrasena !== confirmarContrasena) {
-                this.showModalError('edit-estudiante-modal', 'Las contraseñas no coinciden.');
-                return;
-            }
-
-            // Si pasa la validación, agregar la nueva contraseña a los datos
-            data.contrasena = nuevaContrasena;
         }
 
         // Mostrar indicador de carga
@@ -1992,15 +1888,6 @@ class UIManager {
                 if (window.app && window.app.tables && window.app.tables.estudiantes) {
                     await window.app.tables.estudiantes.loadData();
                 }
-
-                // Limpiar los campos de contraseña
-                document.getElementById('edit-estudiante-contrasena').value = '';
-                document.getElementById('edit-estudiante-confirmar-contrasena').value = '';
-                this.updatePasswordStrength(
-                    'edit-estudiante-contrasena', 
-                    'edit-estudiante-password-strength-fill', 
-                    'edit-estudiante-password-strength-label'
-                );
 
                 // Cerrar modal después de 2 segundos
                 setTimeout(() => {
@@ -2053,26 +1940,6 @@ class UIManager {
             return;
         }
 
-        // Obtener contraseñas si se han llenado
-        const nuevaContrasena = document.getElementById('edit-profesor-contrasena').value;
-        const confirmarContrasena = document.getElementById('edit-profesor-confirmar-contrasena').value;
-
-        // Validar contraseñas si se han ingresado
-        if (nuevaContrasena || confirmarContrasena) {
-            if (nuevaContrasena.length < 8) {
-                this.showModalError('edit-profesor-modal', 'La nueva contraseña debe tener al menos 8 caracteres.');
-                return;
-            }
-
-            if (nuevaContrasena !== confirmarContrasena) {
-                this.showModalError('edit-profesor-modal', 'Las contraseñas no coinciden.');
-                return;
-            }
-
-            // Si pasa la validación, agregar la nueva contraseña a los datos
-            data.contrasena = nuevaContrasena;
-        }
-
         // Mostrar indicador de carga
         const submitBtn = form.querySelector('.save-btn');
         const originalText = submitBtn.innerHTML;
@@ -2100,15 +1967,6 @@ class UIManager {
                     await window.app.tables.profesores.loadData();
                 }
 
-                // Limpiar los campos de contraseña
-                document.getElementById('edit-profesor-contrasena').value = '';
-                document.getElementById('edit-profesor-confirmar-contrasena').value = '';
-                this.updatePasswordStrength(
-                    'edit-profesor-contrasena', 
-                    'edit-profesor-password-strength-fill', 
-                    'edit-profesor-password-strength-label'
-                );
-
                 // Cerrar modal después de 2 segundos
                 setTimeout(() => {
                     this.modals.editProfesor.close();
@@ -2134,15 +1992,6 @@ class UIManager {
         document.getElementById('edit-grado').value = estudianteData.grado;
         document.getElementById('edit-grupo').value = estudianteData.grupo;
 
-        // Limpiar campos de contraseña
-        document.getElementById('edit-estudiante-contrasena').value = '';
-        document.getElementById('edit-estudiante-confirmar-contrasena').value = '';
-        this.updatePasswordStrength(
-            'edit-estudiante-contrasena', 
-            'edit-estudiante-password-strength-fill', 
-            'edit-estudiante-password-strength-label'
-        );
-
         // Limpiar errores previos
         this.clearModalErrors('edit-estudiante-modal');
 
@@ -2167,12 +2016,7 @@ class UIManager {
 
             // Seleccionar asignaturas del profesor
             profesorData.asignaturas.forEach(asignatura => {
-                const option = Array.from(asignaturasSelect.options).find(opt => {
-                    // Normalizar el valor para comparar
-                    const optValue = opt.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                    const asignaturaValue = asignatura.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                    return optValue === asignaturaValue;
-                });
+                const option = Array.from(asignaturasSelect.options).find(opt => opt.value === asignatura.toLowerCase());
                 if (option) {
                     option.selected = true;
                 }
@@ -2182,30 +2026,11 @@ class UIManager {
         // Actualizar contador
         this.updateEditAsignaturasCount();
 
-        // Limpiar campos de contraseña
-        document.getElementById('edit-profesor-contrasena').value = '';
-        document.getElementById('edit-profesor-confirmar-contrasena').value = '';
-        this.updatePasswordStrength(
-            'edit-profesor-contrasena', 
-            'edit-profesor-password-strength-fill', 
-            'edit-profesor-password-strength-label'
-        );
-
         // Limpiar errores previos
         this.clearModalErrors('edit-profesor-modal');
 
         // Abrir modal
         this.modals.editProfesor.open();
-    }
-
-    updateEditAsignaturasCount() {
-        const select = document.getElementById('edit-profesor-asignaturas');
-        const counter = document.getElementById('edit-asignaturas-seleccionadas');
-
-        if (select && counter) {
-            const selectedCount = Array.from(select.selectedOptions).length;
-            counter.textContent = `${selectedCount} asignatura${selectedCount !== 1 ? 's' : ''} seleccionada${selectedCount !== 1 ? 's' : ''}`;
-        }
     }
 
     clearModalErrors(modalId) {
@@ -2224,21 +2049,9 @@ class UIManager {
         });
     }
 
-    setupPasswordToggle(passwordInputId, toggleBtnId) {
-        const toggleBtn = document.getElementById(toggleBtnId);
-        const passwordInput = document.getElementById(passwordInputId);
-
-        if (toggleBtn && passwordInput) {
-            toggleBtn.addEventListener('click', () => {
-                const isVisible = passwordInput.type === 'text';
-                passwordInput.type = isVisible ? 'password' : 'text';
-
-                const icon = toggleBtn.querySelector('i');
-                icon.classList.toggle('fa-eye', isVisible);
-                icon.classList.toggle('fa-eye-slash', !isVisible);
-            });
-        }
-    }
+    // No olvides llamar a setupEditModals en el init de UIManager:
+    // Dentro del método init() de UIManager, agrega:
+    // this.setupEditModals();
 
     setupModalInteractions() {
         // Editar perfil

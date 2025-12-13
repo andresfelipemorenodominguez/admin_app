@@ -842,109 +842,57 @@
                 <form class="edit-estudiante-form" id="edit-estudiante-form">
                     <input type="hidden" id="edit-estudiante-id">
                     
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-user-circle"></i> Información Personal
-                        </h3>
-                        
-                        <div class="form-group">
-                            <label for="edit-nombre-completo" class="form-label">Nombre completo</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user input-icon"></i>
-                                <input type="text" id="edit-nombre-completo" class="form-input" 
-                                    placeholder="Ej: María González López" required>
-                            </div>
-                            <div class="error-message" id="edit-nombre-error"></div>
+                    <div class="form-group">
+                        <label for="edit-nombre-completo" class="form-label">Nombre completo</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="edit-nombre-completo" class="form-input" 
+                                placeholder="Ej: María González López" required>
                         </div>
+                        <div class="error-message" id="edit-nombre-error"></div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="edit-correo-electronico" class="form-label">Correo electrónico</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-envelope input-icon"></i>
-                                <input type="email" id="edit-correo-electronico" class="form-input" 
-                                    placeholder="Ej: estudiante@ejemplo.com" required>
-                            </div>
-                            <div class="error-message" id="edit-correo-error"></div>
+                    <div class="form-group">
+                        <label for="edit-correo-electronico" class="form-label">Correo electrónico</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="edit-correo-electronico" class="form-input" 
+                                placeholder="Ej: estudiante@ejemplo.com" required>
                         </div>
+                        <div class="error-message" id="edit-correo-error"></div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="edit-grado" class="form-label">Grado</label>
-                            <div class="select-wrapper">
-                                <i class="fas fa-sort-numeric-up select-icon"></i>
-                                <select id="edit-grado" class="form-select" required>
-                                    <option value="" disabled selected>Selecciona un grado</option>
-                                    <option value="1">1° Primaria</option>
-                                    <option value="2">2° Primaria</option>
-                                    <option value="3">3° Primaria</option>
-                                    <option value="4">4° Primaria</option>
-                                    <option value="5">5° Primaria</option>
-                                    <option value="6">6° Primaria</option>
-                                    <option value="7">7° Secundaria</option>
-                                    <option value="8">8° Secundaria</option>
-                                    <option value="9">9° Secundaria</option>
-                                    <option value="10">10° Secundaria</option>
-                                    <option value="11">11° Secundaria</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit-grupo" class="form-label">Grupo/Sección</label>
-                            <div class="select-wrapper">
-                                <i class="fas fa-users select-icon"></i>
-                                <select id="edit-grupo" class="form-select" required>
-                                    <option value="" disabled selected>Selecciona un grupo</option>
-                                    <option value="A">A</option>
-                                    <option value="B">B</option>
-                                    <option value="C">C</option>
-                                </select>
-                            </div>
+                    <div class="form-group">
+                        <label for="edit-grado" class="form-label">Grado</label>
+                        <div class="select-wrapper">
+                            <i class="fas fa-sort-numeric-up select-icon"></i>
+                            <select id="edit-grado" class="form-select" required>
+                                <option value="" disabled selected>Selecciona un grado</option>
+                                <option value="1">1° Primaria</option>
+                                <option value="2">2° Primaria</option>
+                                <option value="3">3° Primaria</option>
+                                <option value="4">4° Primaria</option>
+                                <option value="5">5° Primaria</option>
+                                <option value="6">6° Primaria</option>
+                                <option value="7">7° Secundaria</option>
+                                <option value="8">8° Secundaria</option>
+                                <option value="9">9° Secundaria</option>
+                                <option value="10">10° Secundaria</option>
+                                <option value="11">11° Secundaria</option>
+                            </select>
                         </div>
                     </div>
 
-                    <!-- Sección para cambiar contraseña -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-lock"></i> Cambiar Contraseña
-                        </h3>
-                        
-                        <div class="form-group">
-                            <div class="password-generator-container">
-                                <div class="input-with-icon password-container">
-                                    <i class="fas fa-key input-icon"></i>
-                                    <input type="password" id="edit-estudiante-contrasena" 
-                                        class="form-input password-input" 
-                                        placeholder="Nueva contraseña (opcional)">
-                                    <button type="button" class="toggle-password-btn" id="toggle-edit-estudiante-password">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <button type="button" class="btn-secondary generate-password-btn" id="generate-edit-estudiante-password-btn">
-                                    <i class="fas fa-redo"></i> Generar
-                                </button>
-                            </div>
-                            <div class="input-hint">Deja en blanco si no deseas cambiar la contraseña</div>
-                            <div class="password-strength">
-                                <div class="strength-text">Seguridad:</div>
-                                <div class="strength-bar">
-                                    <div class="strength-fill" id="edit-estudiante-password-strength-fill"></div>
-                                </div>
-                                <div class="strength-label" id="edit-estudiante-password-strength-label">Débil</div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit-estudiante-confirmar-contrasena" class="form-label">Confirmar nueva contraseña</label>
-                            <div class="input-with-icon password-container">
-                                <i class="fas fa-key input-icon"></i>
-                                <input type="password" id="edit-estudiante-confirmar-contrasena" 
-                                    class="form-input password-input" 
-                                    placeholder="Confirmar nueva contraseña">
-                                <button type="button" class="toggle-password-btn" id="toggle-edit-estudiante-confirm-password">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                            <div class="error-message" id="edit-estudiante-contrasena-error"></div>
+                    <div class="form-group">
+                        <label for="edit-grupo" class="form-label">Grupo/Sección</label>
+                        <div class="select-wrapper">
+                            <i class="fas fa-users select-icon"></i>
+                            <select id="edit-grupo" class="form-select" required>
+                                <option value="" disabled selected>Selecciona un grupo</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                            </select>
                         </div>
                     </div>
 
@@ -975,123 +923,64 @@
                 <form class="edit-profesor-form" id="edit-profesor-form">
                     <input type="hidden" id="edit-profesor-id">
                     
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-user-circle"></i> Información Personal
-                        </h3>
-                        
-                        <div class="form-group">
-                            <label for="edit-profesor-nombre-completo" class="form-label">Nombre completo</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user input-icon"></i>
-                                <input type="text" id="edit-profesor-nombre-completo" class="form-input" 
-                                    placeholder="Ej: Carlos Rodríguez Martínez" required>
-                            </div>
-                            <div class="error-message" id="edit-profesor-nombre-error"></div>
+                    <div class="form-group">
+                        <label for="edit-profesor-nombre-completo" class="form-label">Nombre completo</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="edit-profesor-nombre-completo" class="form-input" 
+                                placeholder="Ej: Carlos Rodríguez Martínez" required>
                         </div>
-
-                        <div class="form-group">
-                            <label for="edit-profesor-correo-electronico" class="form-label">Correo electrónico</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-envelope input-icon"></i>
-                                <input type="email" id="edit-profesor-correo-electronico" class="form-input" 
-                                    placeholder="Ej: profesor@institucion.edu.co" required>
-                            </div>
-                            <div class="error-message" id="edit-profesor-correo-error"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit-profesor-telefono" class="form-label">Número de teléfono</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-phone input-icon"></i>
-                                <input type="tel" id="edit-profesor-telefono" class="form-input" 
-                                    placeholder="Ej: 3101234567" required>
-                            </div>
-                            <div class="error-message" id="edit-profesor-telefono-error"></div>
-                        </div>
+                        <div class="error-message" id="edit-profesor-nombre-error"></div>
                     </div>
 
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-graduation-cap"></i> Información Académica
-                        </h3>
-                        
-                        <div class="form-group">
-                            <label for="edit-profesor-asignaturas" class="form-label">Asignatura(s) que enseña</label>
-                            <div class="select-wrapper multi-select-wrapper">
-                                <i class="fas fa-book select-icon"></i>
-                                <select id="edit-profesor-asignaturas" class="form-select" multiple required>
-                                    <option value="matematicas">Matemáticas</option>
-                                    <option value="español">Español</option>
-                                    <option value="ciencias-naturales">Ciencias Naturales</option>
-                                    <option value="ciencias-sociales">Ciencias Sociales</option>
-                                    <option value="ingles">Inglés</option>
-                                    <option value="educacion-fisica">Educación Física</option>
-                                    <option value="arte">Arte</option>
-                                    <option value="musica">Música</option>
-                                    <option value="tecnologia">Tecnología</option>
-                                    <option value="etica">Ética y Valores</option>
-                                    <option value="religion">Religión</option>
-                                    <option value="fisica">Física</option>
-                                    <option value="quimica">Química</option>
-                                    <option value="biologia">Biología</option>
-                                    <option value="filosofia">Filosofía</option>
-                                    <option value="economia">Economía</option>
-                                    <option value="informatica">Informática</option>
-                                </select>
-                                <div class="multi-select-info">
-                                    <span id="edit-asignaturas-seleccionadas">0 asignaturas seleccionadas</span>
-                                    <small>(Mantén presionada la tecla Ctrl para seleccionar múltiples opciones)</small>
-                                </div>
-                            </div>
-                            <div class="error-message" id="edit-profesor-asignaturas-error"></div>
+                    <div class="form-group">
+                        <label for="edit-profesor-correo-electronico" class="form-label">Correo electrónico</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="edit-profesor-correo-electronico" class="form-input" 
+                                placeholder="Ej: profesor@institucion.edu.co" required>
                         </div>
+                        <div class="error-message" id="edit-profesor-correo-error"></div>
                     </div>
 
-                    <!-- Sección para cambiar contraseña -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-lock"></i> Cambiar Contraseña
-                        </h3>
-                        
-                        <div class="form-group">
-                            <div class="password-generator-container">
-                                <div class="input-with-icon password-container">
-                                    <i class="fas fa-key input-icon"></i>
-                                    <input type="password" id="edit-profesor-contrasena" 
-                                        class="form-input password-input" 
-                                        placeholder="Nueva contraseña (opcional)">
-                                    <button type="button" class="toggle-password-btn" id="toggle-edit-profesor-password">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <button type="button" class="btn-secondary generate-password-btn" id="generate-edit-profesor-password-btn">
-                                    <i class="fas fa-redo"></i> Generar
-                                </button>
-                            </div>
-                            <div class="input-hint">Deja en blanco si no deseas cambiar la contraseña</div>
-                            <div class="password-strength">
-                                <div class="strength-text">Seguridad:</div>
-                                <div class="strength-bar">
-                                    <div class="strength-fill" id="edit-profesor-password-strength-fill"></div>
-                                </div>
-                                <div class="strength-label" id="edit-profesor-password-strength-label">Débil</div>
-                            </div>
+                    <div class="form-group">
+                        <label for="edit-profesor-telefono" class="form-label">Número de teléfono</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-phone input-icon"></i>
+                            <input type="tel" id="edit-profesor-telefono" class="form-input" 
+                                placeholder="Ej: 3101234567" required>
                         </div>
+                        <div class="error-message" id="edit-profesor-telefono-error"></div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="edit-profesor-confirmar-contrasena" class="form-label">Confirmar nueva contraseña</label>
-                            <div class="input-with-icon password-container">
-                                <i class="fas fa-key input-icon"></i>
-                                <input type="password" id="edit-profesor-confirmar-contrasena" 
-                                    class="form-input password-input" 
-                                    placeholder="Confirmar nueva contraseña">
-                                <button type="button" class="toggle-password-btn" id="toggle-edit-profesor-confirm-password">
-                                    <i class="fas fa-eye"></i>
-                                </button>
+                    <div class="form-group">
+                        <label for="edit-profesor-asignaturas" class="form-label">Asignatura(s) que enseña</label>
+                        <div class="select-wrapper multi-select-wrapper">
+                            <i class="fas fa-book select-icon"></i>
+                            <select id="edit-profesor-asignaturas" class="form-select" multiple required>
+                                <option value="matematicas">Matemáticas</option>
+                                <option value="español">Español</option>
+                                <option value="ciencias-naturales">Ciencias Naturales</option>
+                                <option value="ciencias-sociales">Ciencias Sociales</option>
+                                <option value="ingles">Inglés</option>
+                                <option value="educacion-fisica">Educación Física</option>
+                                <option value="arte">Arte</option>
+                                <option value="musica">Música</option>
+                                <option value="tecnologia">Tecnología</option>
+                                <option value="etica">Ética y Valores</option>
+                                <option value="religion">Religión</option>
+                                <option value="fisica">Física</option>
+                                <option value="quimica">Química</option>
+                                <option value="biologia">Biología</option>
+                                <option value="filosofia">Filosofía</option>
+                                <option value="economia">Economía</option>
+                                <option value="informatica">Informática</option>
+                            </select>
+                            <div class="multi-select-info">
+                                <span id="edit-asignaturas-seleccionadas">0 asignaturas seleccionadas</span>
                             </div>
-                            <div class="error-message" id="edit-profesor-contrasena-error"></div>
                         </div>
+                        <div class="error-message" id="edit-profesor-asignaturas-error"></div>
                     </div>
 
                     <div class="form-actions">

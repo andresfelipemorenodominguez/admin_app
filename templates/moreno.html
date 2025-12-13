@@ -16,7 +16,8 @@
     <!-- ======================== ENCABEZADO ======================== -->
     <header class="text-center p-5 bg-dark text-white mb-4">
         <div class="container">
-            <img src="../static/img/foto.png" alt="Foto de perfil" class="rounded-circle mb-3" width="150">
+            <!-- Corregido: Usando url_for para cargar imagen -->
+            <img src="{{ url_for('static', filename='img/foto.png') }}" alt="Foto de perfil" class="rounded-circle mb-3" width="150">
             <h1 class="fw-bold">Andres Felipe Moreno Dominguez</h1>
             <h4>Estudiante de Programación de Software</h4>
             <p>SENA</p>
@@ -97,7 +98,8 @@
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="../static/img/desarrollador-front-end.png" alt="Certificado Desarrollador Front-end" class="img-fluid">
+                            <!-- Corregido: Usando url_for para cargar imagen -->
+                            <img src="{{ url_for('static', filename='img/desarrollador-front-end.png') }}" alt="Certificado Desarrollador Front-end" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -122,7 +124,8 @@
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="../static/img/fundamentos-estructura-datos.png" alt="Certificado Estructura de Datos" class="img-fluid">
+                            <!-- Corregido: Usando url_for para cargar imagen -->
+                            <img src="{{ url_for('static', filename='img/fundamentos-estructura-datos.png') }}" alt="Certificado Estructura de Datos" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -147,7 +150,8 @@
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="../static/img/introduccion-programacion.png" alt="Certificado Introducción a la Programación" class="img-fluid">
+                            <!-- Corregido: Usando url_for para cargar imagen -->
+                            <img src="{{ url_for('static', filename='img/introduccion-programacion.png') }}" alt="Certificado Introducción a la Programación" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -172,7 +176,8 @@
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="../static/img/postprocesadores-estilo.png" alt="Certificado Postprocesadores" class="img-fluid">
+                            <!-- Corregido: Usando url_for para cargar imagen -->
+                            <img src="{{ url_for('static', filename='img/postprocesadores-estilo.png') }}" alt="Certificado Postprocesadores" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -197,7 +202,8 @@
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="../static/img/programador-orientado-objetos.png" alt="Certificado Programador OO" class="img-fluid">
+                            <!-- Corregido: Usando url_for para cargar imagen -->
+                            <img src="{{ url_for('static', filename='img/programador-orientado-objetos.png') }}" alt="Certificado Programador OO" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -222,7 +228,8 @@
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="../static/img/python.png" alt="Certificado Python" class="img-fluid">
+                            <!-- Corregido: Usando url_for para cargar imagen -->
+                            <img src="{{ url_for('static', filename='img/python.png') }}" alt="Certificado Python" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -247,7 +254,8 @@
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="../static/img/salud-digital.png" alt="Certificado Salud Digital" class="img-fluid">
+                            <!-- Corregido: Usando url_for para cargar imagen -->
+                            <img src="{{ url_for('static', filename='img/salud-digital.png') }}" alt="Certificado Salud Digital" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -272,7 +280,8 @@
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="../static/img/tester.png" alt="Certificado Tester" class="img-fluid">
+                            <!-- Corregido: Usando url_for para cargar imagen -->
+                            <img src="{{ url_for('static', filename='img/tester.png') }}" alt="Certificado Tester" class="img-fluid">
                         </div>
                     </div>
                 </div>
